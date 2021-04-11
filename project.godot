@@ -19,6 +19,13 @@ config/name="DEMO_CASTLE_FIGHT"
 run/main_scene="res://Scenes/world.tscn"
 config/icon="res://icon.png"
 
+[layer_names]
+
+2d_physics/layer_1="Building"
+2d_physics/layer_2="Builder"
+2d_physics/layer_3="Ground Unit"
+2d_physics/layer_4="Air Unit"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

@@ -8,9 +8,11 @@ extents = Vector2( 7.81857, 7.46914 )
 
 [node name="unit" type="KinematicBody2D"]
 scale = Vector2( 2, 2 )
+collision_layer = 2
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -0.25, -0.125 )
+position = Vector2( 0.25, 1.375 )
+scale = Vector2( 1, 0.962753 )
 z_index = 1
 texture = ExtResource( 1 )
 offset = Vector2( 0, -8 )
@@ -22,5 +24,6 @@ texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
+light_mask = 2
 position = Vector2( -0.11113, -6.47505 )
 shape = SubResource( 1 )

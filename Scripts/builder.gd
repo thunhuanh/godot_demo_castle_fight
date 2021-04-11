@@ -19,9 +19,18 @@ func _physics_process(delta):
 func move_to(tar):
 	dest = tar
 	
-func reached(tar):
-	if position.distance_to(tar) <= 1:
-		return true
+func stop():
+	velocity = Vector2.ZERO
+	dest = position
+#state machine
+	#idle dung yen : dest = position
+	#attacking : play anim, gay damage
+	#
+
+	
+#func reached(tar):
+#	if position.distance_to(tar) <= 1:
+#		return trues
 
 func select():
 	selected = true

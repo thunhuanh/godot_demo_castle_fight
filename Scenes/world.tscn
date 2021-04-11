@@ -6,7 +6,7 @@
 [ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=4]
 [ext_resource path="res://Assets/panel.png" type="Texture" id=5]
 [ext_resource path="res://Scenes/unit.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Scripts/soldier.gd" type="Script" id=7]
+[ext_resource path="res://Scripts/builder.gd" type="Script" id=7]
 [ext_resource path="res://Scripts/game.gd" type="Script" id=8]
 [ext_resource path="res://Scripts/SelectionRect.gd" type="Script" id=9]
 [ext_resource path="res://Scripts/Pointer.gd" type="Script" id=10]
@@ -96,6 +96,7 @@ Speed = 25.0
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Control" type="Control" parent="UI"]
+visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 __meta__ = {

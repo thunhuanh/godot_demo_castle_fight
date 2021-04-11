@@ -1,24 +1,28 @@
 extends Node2D
 
-const MAXIMUM_WORK_DISTANCE := 16
+const MAXIMUM_WORK_DISTANCE := 32
 
 var dragging = false
-var selected = []
+var selectedBuilder = null
 var dragStart = Vector2.ZERO
 var selectedRect = RectangleShape2D.new()
 var canPlace = false
 var invalid_tiles = []
 var buildDestination = Vector2.ZERO
+var buildDestTile
 var isBuilding = false
 
 onready var building = preload("res://Scenes/building.tscn")
 
+onready var uiControl = $UI/Control
 onready var selectRectDraw = $selectionRect
 onready var pointer = $pointer
 onready var builder = $buildings/builder
 
 func _process(delta):
-	if builder.reached(buildDestination) and isBuilding:
+	# checked if player 
+	if buildDestTile != null and reacedBuildingPlace(buildDestination) and isBuilding:
+	
 		var tile = $building_placement.world_to_map(buildDestination)
 
 		var newBuilding = building.instance()
@@ -27,8 +31,15 @@ func _process(delta):
 		if not tile in invalid_tiles:
 			$buildings.add_child(newBuilding)
 			invalid_tiles.append(tile)
+			builder.stop()
+
 		isBuilding = false
 		resetBuildPlacement()
+
+func reacedBuildingPlace(tar):
+	var destinationPos = $building_placement.map_to_world(buildDestTile, false)
+	if builder.position.distance_to(destinationPos + Vector2(16, 16)) <= 32:
+		return true
 
 func _unhandled_input(event):
 	var mousePos = get_global_mouse_position()
@@ -49,8 +60,8 @@ func _unhandled_input(event):
 		
 		#if mouse is release
 		pointer.update_status(mousePos, false)
-		for unit in selected:
-			unit.collider.move_to(mousePos)
+		if selectedBuilder != null:
+			selectedBuilder.move_to(mousePos)
 			
 		return
 	
@@ -69,13 +80,17 @@ func _unhandled_input(event):
 			selectRectDraw.update_status(dragStart, mousePos, dragging)
 
 func deselectUnit(event):
-	for unit in selected:
-		unit.collider.deselect()
-	selected = []
+	if selectedBuilder != null:
+		selectedBuilder.deselect()
+	selectedBuilder = null
 	dragging = true
 	dragStart = get_global_mouse_position()
 
 func selectUnit(event):
+	
+	#hide/unhide ui control
+	uiControl.visible = !uiControl.visible
+	
 	#clear dragging rectangle
 	var dragEnd = get_global_mouse_position()
 	dragging = false
@@ -93,36 +108,51 @@ func selectUnit(event):
 	query.set_shape(selectedRect)
 	query.transform = Transform2D(0, (dragEnd + dragStart) / 2)
 	
-	#get all intersect shape
-	selected = space.intersect_shape(query)
-	
+	var intersectShapes = space.intersect_shape(query)
 	#select unit inside rectangle
-	for unit in selected:
-		unit.collider.select()
+	for shape in intersectShapes:
+		if shape.collider.name == builder.name:
+			selectedBuilder = shape.collider
+			selectedBuilder.select()
+#		selectedBuilder = space.intersect_shape(query)[0].collider
+#		print(select)
+#		selectedBuilder.select()
 
 func placeBuilding(event):
 	var global_mouse_position := get_global_mouse_position()
-	
+	buildDestination = global_mouse_position
 	var is_close_to_player := (
 		global_mouse_position.distance_to(builder.global_position)
-		< MAXIMUM_WORK_DISTANCE
+		<= MAXIMUM_WORK_DISTANCE
 	)
-	
+
+	#check
+	var builderPos = builder.position
+	if builderPos.distance_to(buildDestination) < 20:
+		var directionToMove = builderPos.direction_to(buildDestination)
+		builder.move_to(-directionToMove)
+
+	#reset place ment
 	resetBuildPlacement()
-	var tile = $building_placement.world_to_map(get_global_mouse_position())
+	
+	#prepate tile for placing building
+	var tile = $building_placement.world_to_map(global_mouse_position)
+	buildDestTile = tile
 	
 	var newBuilding = building.instance()
 	newBuilding.position = tile * Vector2(32, 32)
+	
+	#if close to player and tile is valid then place building
 	if not tile in invalid_tiles && is_close_to_player:
 		$buildings.add_child(newBuilding)
 		invalid_tiles.append(tile)
+		builder.stop()
+
+	#else move to build dest
 	elif not tile in invalid_tiles:
-		buildDestination = global_mouse_position
 		isBuilding = true
 		builder.move_to(global_mouse_position)
-		
-		
-
+	
 func resetBuildPlacement():
 	$building_placement.clear()
 	canPlace = false
