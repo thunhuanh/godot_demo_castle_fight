@@ -31,6 +31,7 @@ func _process(delta):
 		resetBuildPlacement()
 
 func _unhandled_input(event):
+	var mousePos = get_global_mouse_position()
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
 			deselectUnit(event)
@@ -43,13 +44,13 @@ func _unhandled_input(event):
 		
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT:
 		if event.is_pressed():
-			pointer.update_status(get_global_mouse_position(), true)
+			pointer.update_status(mousePos, true)
 			return
 		
 		#if mouse is release
-		pointer.update_status(get_global_mouse_position(), false)
+		pointer.update_status(mousePos, false)
 		for unit in selected:
-			unit.collider.move_to(get_global_mouse_position())
+			unit.collider.move_to(mousePos)
 			
 		return
 	
@@ -59,13 +60,13 @@ func _unhandled_input(event):
 	if event is InputEventMouseMotion:
 		if canPlace:
 			$building_placement.clear()
-			var tile = $building_placement.world_to_map(event.position)
+			var tile = $building_placement.world_to_map(mousePos)
 			if not tile in invalid_tiles:
 				$building_placement.set_cell(tile.x, tile.y, 0)
 			else:
 				$building_placement.set_cell(tile.x, tile.y, 1)
 		if dragging:
-			selectRectDraw.update_status(dragStart, get_global_mouse_position(), dragging)
+			selectRectDraw.update_status(dragStart, mousePos, dragging)
 
 func deselectUnit(event):
 	for unit in selected:
@@ -108,7 +109,7 @@ func placeBuilding(event):
 	)
 	
 	resetBuildPlacement()
-	var tile = $building_placement.world_to_map(event.position)
+	var tile = $building_placement.world_to_map(get_global_mouse_position())
 	
 	var newBuilding = building.instance()
 	newBuilding.position = tile * Vector2(32, 32)

@@ -20,7 +20,6 @@ func move_to(tar):
 	dest = tar
 	
 func reached(tar):
-	print(position.distance_to(tar))
 	if position.distance_to(tar) <= 1:
 		return true
 
