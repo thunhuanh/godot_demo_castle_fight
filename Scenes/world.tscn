@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://Tilesets/env_tileset.res" type="TileSet" id=1]
 [ext_resource path="res://Tilesets/road_tileset.res" type="TileSet" id=2]
@@ -18,6 +18,8 @@
 [ext_resource path="res://Assets/pointer2.png" type="Texture" id=16]
 [ext_resource path="res://Assets/invalid_placement.png" type="Texture" id=17]
 [ext_resource path="res://Assets/valid_placement.png" type="Texture" id=18]
+[ext_resource path="res://Assets/mainHouse1.png" type="Texture" id=19]
+[ext_resource path="res://Assets/mainHouse2.png" type="Texture" id=20]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -57,6 +59,12 @@ animations = [ {
 1/shapes = [  ]
 1/z_index = 0
 
+[sub_resource type="CircleShape2D" id=3]
+radius = 34.9148
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 34.0082
+
 [node name="world" type="Node2D"]
 script = ExtResource( 8 )
 
@@ -71,7 +79,7 @@ position = Vector2( 554.372, 274.357 )
 tile_set = ExtResource( 2 )
 cell_size = Vector2( 32, 32 )
 format = 1
-tile_data = PoolIntArray( -65542, -1073741823, 0, -65541, 0, 0, -65540, 0, 0, -65539, 0, 0, -65538, 0, 0, -65537, 0, 0, -131072, 0, 0, -131071, 0, 0, -131070, 0, 0, -131069, 1, 0, -131068, -1073741823, 0, -131067, 1, 0, -6, -1073741824, 0, -65534, -1073741823, 0, -65533, 2, 0, -65532, -1610612735, 0, -65531, -1610612736, 0, 65530, -1073741824, 0, 2, -1610612736, 0, 3, -1610612736, 0, 5, -1610612736, 0, 131066, -1073741824, 0, 65538, -1610612736, 0, 65539, -1610612736, 0, 65541, -1610612736, 0, 196595, -1073741823, 0, 196596, 0, 0, 196597, 0, 0, 196598, 0, 0, 196599, 0, 0, 196600, 0, 0, 196601, 0, 0, 196602, -1610612735, 0, 131074, -1073741824, 0, 131075, 1610612737, 0, 131076, 1610612736, 0, 131077, -1610612735, 0, 262131, 1610612737, 0, 262132, 1610612736, 0, 262133, 1610612736, 0, 262134, 1610612736, 0, 262135, 1610612736, 0, 262136, 1610612736, 0, 262137, 1610612736, 0, 262138, 1610612736, 0, 262139, 1610612736, 0, 262140, 1610612736, 0, 262141, 1610612736, 0, 262142, 1610612736, 0, 262143, 1610612736, 0, 196608, 1610612736, 0, 196609, 1610612736, 0, 196610, -1610612735, 0 )
+tile_data = PoolIntArray( -131081, -1073741823, 0, -131080, 0, 0, -131079, 0, 0, -131078, 0, 0, -131077, 0, 0, -131076, 0, 0, -131075, 0, 0, -131074, 0, 0, -131073, 0, 0, -196608, 0, 0, -196607, 0, 0, -196606, 0, 0, -196605, 0, 0, -196604, 1, 0, -65547, -1073741823, 0, -65546, 0, 0, -65545, -1610612735, 0, -131068, 1610612737, 0, -131067, 0, 0, -131066, 1, 0, -11, -1610612736, 0, -65530, -1073741824, 0, 65525, 1610612737, 0, 65526, 1610612736, 0, 65527, 1, 0, 4, -1073741823, 0, 5, 1610612736, 0, 6, -1610612735, 0, 131063, 1610612737, 0, 131064, 0, 0, 131065, 0, 0, 131066, 0, 0, 131067, 0, 0, 131068, 0, 0, 131069, 0, 0, 131070, 0, 0, 131071, 0, 0, 65536, 0, 0, 65537, 0, 0, 65538, 0, 0, 65539, 0, 0, 65540, -1610612735, 0 )
 
 [node name="selectionRect" type="Node2D" parent="."]
 script = ExtResource( 9 )
@@ -153,4 +161,27 @@ format = 1
 position = Vector2( 160, 160 )
 script = ExtResource( 7 )
 speed = 150.0
+
+[node name="mainHouse" type="StaticBody2D" parent="."]
+position = Vector2( 169.384, 252.414 )
+collision_mask = 7
+
+[node name="Sprite" type="Sprite" parent="mainHouse"]
+texture = ExtResource( 19 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="mainHouse"]
+visible = false
+position = Vector2( 0.396851, 1.98425 )
+shape = SubResource( 3 )
+
+[node name="enemyHouse" type="StaticBody2D" parent="."]
+position = Vector2( 843.525, 263.728 )
+
+[node name="Sprite" type="Sprite" parent="enemyHouse"]
+texture = ExtResource( 20 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="enemyHouse"]
+visible = false
+position = Vector2( 0, -0.374557 )
+shape = SubResource( 4 )
 [connection signal="pressed" from="UI/Control/NinePatchRect/GridContainer/Button" to="." method="_on_Button_pressed"]
