@@ -3,10 +3,15 @@ extends KinematicBody2D
 var selected = false
 var dest = Vector2.ZERO
 var velocity = Vector2.ZERO
+var pathfinding : Pathfinding
 export var speed = 40.0
 
 func _ready():
 	dest = position
+	
+func init(pathfinding: Pathfinding):
+	self.pathfinding = pathfinding
+	
 	
 func _physics_process(delta):
 	#reset velocity
@@ -14,11 +19,19 @@ func _physics_process(delta):
 	
 	if position.distance_to(dest) > 1.5:
 		velocity = position.direction_to(dest) * speed
+	var path = pathfinding.getPath(global_position, dest)
+	if path.size() > 1:
+		if position.distance_to(path[0]) > 1.5:
+			velocity = position.direction_to(path[0]) * speed
 	velocity = move_and_slide(velocity)
 	
 func move_to(tar):
 	dest = tar
 	
+func move_along_path(path):
+	for p in path:
+		move_to(p)
+
 func stop():
 	velocity = Vector2.ZERO
 	dest = position

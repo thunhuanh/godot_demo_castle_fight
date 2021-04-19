@@ -17,19 +17,43 @@ onready var building = preload("res://Scenes/building.tscn")
 onready var uiControl = $UI/Control
 onready var selectRectDraw = $selectionRect
 onready var pointer = $pointer
-onready var builder = $buildings/builder
+onready var builder = $instanceSort/builder
+onready var buildingPlacement = $building_placement
+onready var buildings = $instanceSort
+onready var mainHouse = $instanceSort/mainHouse
+onready var enemyHouse = $instanceSort/enemyHouse
+onready var env = $enviroment
+onready var pathfinding = $pathfinding
+
+func _ready():
+	pathfinding.genMap(env)
+	var mainHouseTile = env.world_to_map(mainHouse.position)
+	var enemyHouseTile = env.world_to_map(enemyHouse.position)
+	pathfinding.removePoint(mainHouseTile)
+	pathfinding.removePoint(mainHouseTile + Vector2(-1, 1))
+	pathfinding.removePoint(mainHouseTile + Vector2(0, 1))
+	pathfinding.removePoint(mainHouseTile + Vector2(1, 1))
+	pathfinding.removePoint(enemyHouseTile)
+	pathfinding.removePoint(enemyHouseTile + Vector2(-1, 1))
+	pathfinding.removePoint(enemyHouseTile + Vector2(0, 1))
+	pathfinding.removePoint(enemyHouseTile + Vector2(1, 1))
+	
+	print(pathfinding.aStar2D.is_point_disabled(pathfinding.id(mainHouseTile)))
+	builder.init(pathfinding)
 
 func _process(delta):
 	# checked if player 
 	if buildDestTile != null and reacedBuildingPlace(buildDestination) and isBuilding:
 	
-		var tile = $building_placement.world_to_map(buildDestination)
+		var tile = buildingPlacement.world_to_map(buildDestination)
 
 		var newBuilding = building.instance()
 		newBuilding.position = tile * Vector2(32, 32)
 		
 		if not tile in invalid_tiles:
-			$buildings.add_child(newBuilding)
+			buildings.add_child(newBuilding)
+			# remove from pathfinding
+			pathfinding.removePoint(tile)
 			invalid_tiles.append(tile)
 			builder.stop()
 
@@ -37,7 +61,7 @@ func _process(delta):
 		resetBuildPlacement()
 
 func reacedBuildingPlace(tar):
-	var destinationPos = $building_placement.map_to_world(buildDestTile, false)
+	var destinationPos = buildingPlacement.map_to_world(buildDestTile, false)
 	if builder.position.distance_to(destinationPos + Vector2(16, 16)) <= 32:
 		return true
 
@@ -62,7 +86,7 @@ func _unhandled_input(event):
 		pointer.update_status(mousePos, false)
 		if selectedBuilder != null:
 			selectedBuilder.move_to(mousePos)
-			
+
 		return
 	
 	if event.is_action_pressed("ui_cancel"):
@@ -70,12 +94,12 @@ func _unhandled_input(event):
 	
 	if event is InputEventMouseMotion:
 		if canPlace:
-			$building_placement.clear()
-			var tile = $building_placement.world_to_map(mousePos)
+			buildingPlacement.clear()
+			var tile = buildingPlacement.world_to_map(mousePos)
 			if not tile in invalid_tiles:
-				$building_placement.set_cell(tile.x, tile.y, 0)
+				buildingPlacement.set_cell(tile.x, tile.y, 0)
 			else:
-				$building_placement.set_cell(tile.x, tile.y, 1)
+				buildingPlacement.set_cell(tile.x, tile.y, 1)
 		if dragging:
 			selectRectDraw.update_status(dragStart, mousePos, dragging)
 
@@ -114,9 +138,6 @@ func selectUnit(event):
 		if shape.collider.name == builder.name:
 			selectedBuilder = shape.collider
 			selectedBuilder.select()
-#		selectedBuilder = space.intersect_shape(query)[0].collider
-#		print(select)
-#		selectedBuilder.select()
 
 func placeBuilding(event):
 	var global_mouse_position := get_global_mouse_position()
@@ -136,7 +157,7 @@ func placeBuilding(event):
 	resetBuildPlacement()
 	
 	#prepate tile for placing building
-	var tile = $building_placement.world_to_map(global_mouse_position)
+	var tile = buildingPlacement.world_to_map(global_mouse_position)
 	buildDestTile = tile
 	
 	var newBuilding = building.instance()
@@ -144,7 +165,9 @@ func placeBuilding(event):
 	
 	#if close to player and tile is valid then place building
 	if not tile in invalid_tiles && is_close_to_player:
-		$buildings.add_child(newBuilding)
+		buildings.add_child(newBuilding)
+		# remove from pathfinding
+		pathfinding.removePoint(tile)
 		invalid_tiles.append(tile)
 		builder.stop()
 
@@ -154,9 +177,9 @@ func placeBuilding(event):
 		builder.move_to(global_mouse_position)
 	
 func resetBuildPlacement():
-	$building_placement.clear()
+	buildingPlacement.clear()
 	canPlace = false
 
 func _on_Button_pressed():
-	$building_placement.clear()
+	buildingPlacement.clear()
 	canPlace = !canPlace

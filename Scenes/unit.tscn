@@ -3,27 +3,28 @@
 [ext_resource path="res://Assets/citizen1.png" type="Texture" id=1]
 [ext_resource path="res://Assets/bounding box.png" type="Texture" id=2]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 7.81857, 7.46914 )
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 5.1168
+height = 2.56157
 
 [node name="unit" type="KinematicBody2D"]
 scale = Vector2( 2, 2 )
 collision_layer = 2
 
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 0.25, 1.375 )
-scale = Vector2( 1, 0.962753 )
-z_index = 1
-texture = ExtResource( 1 )
-offset = Vector2( 0, -8 )
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+light_mask = 2
+position = Vector2( -0.529731, -6.29057 )
+shape = SubResource( 1 )
 
 [node name="Box" type="Sprite" parent="."]
 visible = false
 position = Vector2( -0.111366, -6.12492 )
 texture = ExtResource( 2 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-light_mask = 2
-position = Vector2( -0.11113, -6.47505 )
-shape = SubResource( 1 )
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 1, 0.962753 )
+texture = ExtResource( 1 )
+offset = Vector2( 0, -8 )
+__meta__ = {
+"_edit_lock_": true
+}
