@@ -29,14 +29,14 @@ func _ready():
 	pathfinding.genMap(env)
 	var mainHouseTile = env.world_to_map(mainHouse.position)
 	var enemyHouseTile = env.world_to_map(enemyHouse.position)
-	pathfinding.removePoint(mainHouseTile)
-	pathfinding.removePoint(mainHouseTile + Vector2(-1, 1))
-	pathfinding.removePoint(mainHouseTile + Vector2(0, 1))
-	pathfinding.removePoint(mainHouseTile + Vector2(1, 1))
-	pathfinding.removePoint(enemyHouseTile)
-	pathfinding.removePoint(enemyHouseTile + Vector2(-1, 1))
-	pathfinding.removePoint(enemyHouseTile + Vector2(0, 1))
-	pathfinding.removePoint(enemyHouseTile + Vector2(1, 1))
+	pathfinding.disablePoint(mainHouseTile)
+	pathfinding.disablePoint(mainHouseTile + Vector2(-1, 1))
+	pathfinding.disablePoint(mainHouseTile + Vector2(0, 1))
+	pathfinding.disablePoint(mainHouseTile + Vector2(1, 1))
+	pathfinding.disablePoint(enemyHouseTile)
+	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 1))
+	pathfinding.disablePoint(enemyHouseTile + Vector2(0, 1))
+	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 1))
 	
 	print(pathfinding.aStar2D.is_point_disabled(pathfinding.id(mainHouseTile)))
 	builder.init(pathfinding)
@@ -53,7 +53,7 @@ func _process(delta):
 		if not tile in invalid_tiles:
 			buildings.add_child(newBuilding)
 			# remove from pathfinding
-			pathfinding.removePoint(tile)
+			pathfinding.disablePoint(tile)
 			invalid_tiles.append(tile)
 			builder.stop()
 

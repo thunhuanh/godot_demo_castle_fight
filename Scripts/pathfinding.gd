@@ -41,10 +41,15 @@ func connectPoint(tiles: Array) -> void:
 				
 				aStar2D.connect_points(id(cell), id(nextCell), true)
 
-func removePoint(point) -> void:
+func disablePoint(point) -> void:
 	if not aStar2D.is_point_disabled(id(point)):
 		aStar2D.set_point_disabled(id(point), true)
 
+func enablePoint(point) -> void:
+	if aStar2D.is_point_disabled(id(point)):
+		aStar2D.set_point_disabled(id(point), false)
+	
+	
 # calculate cell index
 func id(point) -> int:
 	# subtract offset from position
@@ -52,7 +57,7 @@ func id(point) -> int:
 	return point.y * usedRect.size.x + point.x
 
 # return path calculate by aStar
-func getPath(start, end):
+func getPath(start, end) -> Array:
 	var startTile = tilemap.world_to_map(start)
 	var endTile = tilemap.world_to_map(end)
 	if not aStar2D.has_point(id(startTile)) or not aStar2D.has_point(id(endTile)):
@@ -65,3 +70,4 @@ func getPath(start, end):
 		var pointInWorld = tilemap.map_to_world(point) + halfCellSize
 		pathWorld.append(pointInWorld)
 	return pathWorld
+
