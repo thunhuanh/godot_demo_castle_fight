@@ -67,7 +67,7 @@ func getPath(start, end) -> Array:
 	
 	var pathWorld = []
 	for point in path:
-		var pointInWorld = tilemap.map_to_world(point) + halfCellSize
+		var pointInWorld = tilemap.map_to_world(point) + Vector2(16, 16)
 		pathWorld.append(pointInWorld)
 	return pathWorld
 

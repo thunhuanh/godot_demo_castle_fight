@@ -9,9 +9,9 @@ export var speed = 40.0
 func _ready():
 	dest = position
 	
-func init(pathfinding: Pathfinding):
-	self.pathfinding = pathfinding
-	
+func setPathfinding(_pathfinding: Pathfinding):
+	self.pathfinding = _pathfinding
+	set_physics_process(true)
 	
 func _physics_process(delta):
 	#reset velocity
@@ -20,6 +20,7 @@ func _physics_process(delta):
 	if position.distance_to(dest) > 1.5:
 		velocity = position.direction_to(dest) * speed
 	var path = pathfinding.getPath(global_position, dest)
+
 	if path.size() > 1:
 		if position.distance_to(path[0]) > 1.5:
 			velocity = position.direction_to(path[0]) * speed
@@ -37,13 +38,8 @@ func stop():
 	dest = position
 #state machine
 	#idle dung yen : dest = position
-	#attacking : play anim, gay damage
+	#attacking : play anim, deal damage
 	#
-
-	
-#func reached(tar):
-#	if position.distance_to(tar) <= 1:
-#		return trues
 
 func select():
 	selected = true

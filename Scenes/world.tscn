@@ -103,7 +103,7 @@ polygon = PoolVector2Array( 28.0998, 19.9427, 9.29437, 31.8617, -6.06784, 31.596
 
 [node name="enemyHouse" type="StaticBody2D" parent="instanceSort"]
 position = Vector2( 843.525, 263.728 )
-collision_mask = 5
+collision_mask = 6
 
 [node name="Sprite" type="Sprite" parent="instanceSort/enemyHouse"]
 position = Vector2( 1, -11 )
@@ -113,8 +113,10 @@ texture = ExtResource( 20 )
 visible = false
 polygon = PoolVector2Array( 29.4832, 7.48233, 10.2694, 20.869, -5.95209, 21.0265, -27.2133, 10.3171, -26.5833, -7.16428, -10.6768, -11.7315, 15.4666, -11.4165, 29.7982, -8.42418 )
 
+[node name="buildings" type="YSort" parent="instanceSort"]
+
 [node name="builder" parent="instanceSort" instance=ExtResource( 6 )]
-position = Vector2( 154.655, 189.4 )
+position = Vector2( 290.655, 147.4 )
 input_pickable = true
 script = ExtResource( 7 )
 speed = 150.0

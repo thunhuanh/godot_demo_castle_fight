@@ -19,7 +19,7 @@ onready var selectRectDraw = $selectionRect
 onready var pointer = $pointer
 onready var builder = $instanceSort/builder
 onready var buildingPlacement = $building_placement
-onready var buildings = $instanceSort
+onready var buildings = $instanceSort/buildings
 onready var mainHouse = $instanceSort/mainHouse
 onready var enemyHouse = $instanceSort/enemyHouse
 onready var env = $enviroment
@@ -38,8 +38,7 @@ func _ready():
 	pathfinding.disablePoint(enemyHouseTile + Vector2(0, 1))
 	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 1))
 	
-	print(pathfinding.aStar2D.is_point_disabled(pathfinding.id(mainHouseTile)))
-	builder.init(pathfinding)
+	builder.setPathfinding(pathfinding)
 
 func _process(delta):
 	# checked if player 
@@ -53,8 +52,9 @@ func _process(delta):
 		if not tile in invalid_tiles:
 			buildings.add_child(newBuilding)
 			# remove from pathfinding
-			pathfinding.disablePoint(tile)
 			invalid_tiles.append(tile)
+			pathfinding.disablePoint(tile)
+			builder.setPathfinding(pathfinding)
 			builder.stop()
 
 		isBuilding = false
@@ -112,9 +112,6 @@ func deselectUnit(event):
 
 func selectUnit(event):
 	
-	#hide/unhide ui control
-	uiControl.visible = !uiControl.visible
-	
 	#clear dragging rectangle
 	var dragEnd = get_global_mouse_position()
 	dragging = false
@@ -138,6 +135,9 @@ func selectUnit(event):
 		if shape.collider.name == builder.name:
 			selectedBuilder = shape.collider
 			selectedBuilder.select()
+			
+			#hide/unhide ui control
+			uiControl.visible = !uiControl.visible
 
 func placeBuilding(event):
 	var global_mouse_position := get_global_mouse_position()
@@ -149,7 +149,7 @@ func placeBuilding(event):
 
 	#check
 	var builderPos = builder.position
-	if builderPos.distance_to(buildDestination) < 20:
+	if builderPos.distance_to(buildDestination) < 32:
 		var directionToMove = builderPos.direction_to(buildDestination)
 		builder.move_to(-directionToMove)
 
@@ -167,8 +167,9 @@ func placeBuilding(event):
 	if not tile in invalid_tiles && is_close_to_player:
 		buildings.add_child(newBuilding)
 		# remove from pathfinding
-		pathfinding.removePoint(tile)
 		invalid_tiles.append(tile)
+		pathfinding.disablePoint(tile)
+		builder.setPathfinding(pathfinding)
 		builder.stop()
 
 	#else move to build dest

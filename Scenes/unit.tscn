@@ -4,27 +4,24 @@
 [ext_resource path="res://Assets/bounding box.png" type="Texture" id=2]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 5.1168
-height = 2.56157
+radius = 1.88232
+height = 5.60404
 
 [node name="unit" type="KinematicBody2D"]
-scale = Vector2( 2, 2 )
-collision_layer = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-light_mask = 2
-position = Vector2( -0.529731, -6.29057 )
-shape = SubResource( 1 )
-
-[node name="Box" type="Sprite" parent="."]
-visible = false
-position = Vector2( -0.111366, -6.12492 )
-texture = ExtResource( 2 )
+collision_mask = 7
 
 [node name="Sprite" type="Sprite" parent="."]
-scale = Vector2( 1, 0.962753 )
 texture = ExtResource( 1 )
-offset = Vector2( 0, -8 )
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="Box" type="Sprite" parent="."]
+visible = false
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+light_mask = 2
+position = Vector2( -0.434338, 6.93018 )
+rotation = 1.5708
+shape = SubResource( 1 )
