@@ -106,6 +106,7 @@ func _unhandled_input(event):
 func deselectUnit(event):
 	if selectedBuilder != null:
 		selectedBuilder.deselect()
+		uiControl.visible = false
 	selectedBuilder = null
 	dragging = true
 	dragStart = get_global_mouse_position()
@@ -137,7 +138,7 @@ func selectUnit(event):
 			selectedBuilder.select()
 			
 			#hide/unhide ui control
-			uiControl.visible = !uiControl.visible
+			uiControl.visible = true
 
 func placeBuilding(event):
 	var global_mouse_position := get_global_mouse_position()
