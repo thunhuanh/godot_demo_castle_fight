@@ -34,9 +34,8 @@ func _ready():
 	pathfinding.disablePoint(mainHouseTile + Vector2(0, 1))
 	pathfinding.disablePoint(mainHouseTile + Vector2(1, 1))
 	pathfinding.disablePoint(enemyHouseTile)
-	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 1))
-	pathfinding.disablePoint(enemyHouseTile + Vector2(0, 1))
-	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 1))
+	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 0))
+	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 0))
 	
 	builder.setPathfinding(pathfinding)
 
