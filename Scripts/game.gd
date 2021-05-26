@@ -12,7 +12,7 @@ var buildDestination = Vector2.ZERO
 var buildDestTile
 var isBuilding = false
 
-onready var building = preload("res://Scenes/building.tscn")
+export onready var building = preload("res://Scenes/building.tscn")
 
 onready var uiControl = $UI/Control
 onready var selectRectDraw = $selectionRect
@@ -41,7 +41,7 @@ func _ready():
 
 func _process(delta):
 	# checked if player 
-	if buildDestTile != null and reacedBuildingPlace(buildDestination) and isBuilding:
+	if buildDestTile != null and reachedBuildingPlace(buildDestination) and isBuilding:
 	
 		var tile = buildingPlacement.world_to_map(buildDestination)
 
@@ -59,7 +59,7 @@ func _process(delta):
 		isBuilding = false
 		resetBuildPlacement()
 
-func reacedBuildingPlace(tar):
+func reachedBuildingPlace(tar):
 	var destinationPos = buildingPlacement.map_to_world(buildDestTile, false)
 	if builder.position.distance_to(destinationPos + Vector2(16, 16)) <= 32:
 		return true

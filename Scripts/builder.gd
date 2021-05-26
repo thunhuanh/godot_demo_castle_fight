@@ -1,4 +1,5 @@
 extends KinematicBody2D
+class_name unit
 
 var selected = false
 var dest = Vector2.ZERO
