@@ -184,4 +184,5 @@ __meta__ = {
 margin_right = 44.0
 margin_bottom = 38.0
 icon = ExtResource( 3 )
+
 [connection signal="pressed" from="UI/Control/NinePatchRect/GridContainer/Button" to="." method="_on_Button_pressed"]

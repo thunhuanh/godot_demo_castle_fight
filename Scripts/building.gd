@@ -7,11 +7,11 @@ extends StaticBody2D
 
 var selected = false
 export var spawnRate = 5
-var spawnTick = 0
 export var maxHealth = 100
-var buildTime = 5
+var spawnTick = 0
+var buildTime = 5 # second
 var currentHealth = 0
-var maxSoldier = 5
+var maxSoldier = 3
 var numOfSoldier = 0
 onready var spawnTimer : Timer = $SpawnTimer
 onready var buildTimer : Timer = $BuildTimer
@@ -53,7 +53,8 @@ func select():
 	selected = true
 
 func takeDamage(damage: int) -> void:
-	healthBar.set_value(healthBar.get_value() - damage)
+	currentHealth -= damage
+	healthBar.set_value(currentHealth)
 
 func _on_Timer_timeout():
 	spawnTick += 1
