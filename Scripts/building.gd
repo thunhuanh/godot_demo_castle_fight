@@ -8,9 +8,9 @@ extends StaticBody2D
 var selected = false
 export var spawnRate = 5
 export var maxHealth = 100
+var currentHealth = 0
 var spawnTick = 0
 var buildTime = 5 # second
-var currentHealth = 0
 var maxSoldier = 3
 var numOfSoldier = 0
 onready var spawnTimer : Timer = $SpawnTimer
