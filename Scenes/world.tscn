@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://Tilesets/env_tileset.res" type="TileSet" id=1]
 [ext_resource path="res://Tilesets/road_tileset.res" type="TileSet" id=2]
@@ -10,17 +10,22 @@
 [ext_resource path="res://Scripts/game.gd" type="Script" id=8]
 [ext_resource path="res://Scripts/SelectionRect.gd" type="Script" id=9]
 [ext_resource path="res://Scripts/Pointer.gd" type="Script" id=10]
-[ext_resource path="res://Assets/pointer3.png" type="Texture" id=11]
-[ext_resource path="res://Assets/pointer4.png" type="Texture" id=12]
-[ext_resource path="res://Assets/pointer5.png" type="Texture" id=13]
-[ext_resource path="res://Assets/pointer6.png" type="Texture" id=14]
-[ext_resource path="res://Assets/pointer1.png" type="Texture" id=15]
-[ext_resource path="res://Assets/pointer2.png" type="Texture" id=16]
+[ext_resource path="res://Assets/move11.png" type="Texture" id=11]
+[ext_resource path="res://Assets/move3.png" type="Texture" id=12]
+[ext_resource path="res://Assets/move1.png" type="Texture" id=13]
+[ext_resource path="res://Assets/move8.png" type="Texture" id=14]
+[ext_resource path="res://Assets/move10.png" type="Texture" id=15]
+[ext_resource path="res://Assets/move2.png" type="Texture" id=16]
 [ext_resource path="res://Assets/invalid_placement.png" type="Texture" id=17]
 [ext_resource path="res://Assets/valid_placement.png" type="Texture" id=18]
 [ext_resource path="res://Assets/mainHouse1.png" type="Texture" id=19]
 [ext_resource path="res://Assets/mainHouse2.png" type="Texture" id=20]
 [ext_resource path="res://Scripts/pathfinding.gd" type="Script" id=21]
+[ext_resource path="res://Assets/move5.png" type="Texture" id=22]
+[ext_resource path="res://Assets/move6.png" type="Texture" id=23]
+[ext_resource path="res://Assets/move7.png" type="Texture" id=24]
+[ext_resource path="res://Assets/move4.png" type="Texture" id=25]
+[ext_resource path="res://Assets/move9.png" type="Texture" id=26]
 
 [sub_resource type="TileSet" id=1]
 0/name = "valid_placement.png 0"
@@ -54,10 +59,10 @@
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
-"frames": [ ExtResource( 15 ), ExtResource( 16 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ) ],
-"loop": false,
+"frames": [ ExtResource( 13 ), ExtResource( 16 ), ExtResource( 12 ), ExtResource( 25 ), ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 14 ), ExtResource( 26 ), ExtResource( 15 ), ExtResource( 11 ) ],
+"loop": true,
 "name": "default",
-"speed": 5.0
+"speed": 11.0
 } ]
 
 [node name="world" type="Node2D"]
@@ -127,10 +132,12 @@ script = ExtResource( 9 )
 script = ExtResource( 10 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="pointer"]
-scale = Vector2( 2, 2 )
+modulate = Color( 1, 0, 0, 1 )
+self_modulate = Color( 1, 0, 0, 1 )
+scale = Vector2( 1.29147, 1.20693 )
 frames = SubResource( 2 )
-frame = 5
-speed_scale = 3.0
+frame = 8
+speed_scale = 2.0
 playing = true
 
 [node name="camera2D" type="Camera2D" parent="."]
@@ -184,5 +191,4 @@ __meta__ = {
 margin_right = 44.0
 margin_bottom = 38.0
 icon = ExtResource( 3 )
-
 [connection signal="pressed" from="UI/Control/NinePatchRect/GridContainer/Button" to="." method="_on_Button_pressed"]

@@ -7,10 +7,9 @@ extends StaticBody2D
 
 var selected = false
 export var spawnRate = 5
-export var maxHealth = 100
+export var maxHealth = 50
 var currentHealth = 0
 var spawnTick = 0
-var buildTime = 5 # second
 var maxSoldier = 3
 var numOfSoldier = 0
 onready var spawnTimer : Timer = $SpawnTimer
@@ -62,7 +61,7 @@ func _on_Timer_timeout():
 	var isDoneBuilding = currentHealth == maxHealth
 	if numOfSoldier <= maxSoldier && isDoneBuilding && spawnTick == spawnRate:
 		var newSoldier = soldier.instance()
-		newSoldier.position = position + Vector2(32, 16)
+		newSoldier.position = position + Vector2(48, 16)
 		get_parent().add_child(newSoldier)
 		newSoldier.move_to(get_global_mouse_position())
 		numOfSoldier += 1

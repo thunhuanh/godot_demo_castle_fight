@@ -37,9 +37,9 @@ func _ready():
 	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 0))
 	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 0))
 	
-	invalid_tiles.append_array([mainHouseTile, mainHouseTile + Vector2(-1, 1),
+	invalid_tiles = invalid_tiles + [mainHouseTile, mainHouseTile + Vector2(-1, 1),
 	 mainHouseTile + Vector2(0, 1), enemyHouseTile, enemyHouseTile + Vector2(-1, 0),
-	 enemyHouseTile + Vector2(1, 0)])
+	 enemyHouseTile + Vector2(1, 0)]
 	
 	builder.setPathfinding(pathfinding)
 
