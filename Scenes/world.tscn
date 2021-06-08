@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=33 format=2]
 
 [ext_resource path="res://Tilesets/env_tileset.res" type="TileSet" id=1]
 [ext_resource path="res://Tilesets/road_tileset.res" type="TileSet" id=2]
@@ -26,6 +26,10 @@
 [ext_resource path="res://Assets/move7.png" type="Texture" id=24]
 [ext_resource path="res://Assets/move4.png" type="Texture" id=25]
 [ext_resource path="res://Assets/move9.png" type="Texture" id=26]
+[ext_resource path="res://Scripts/mainHouse.gd" type="Script" id=27]
+[ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=28]
+[ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=29]
+[ext_resource path="res://Assets/progress-bar-over.png" type="Texture" id=30]
 
 [sub_resource type="TileSet" id=1]
 0/name = "valid_placement.png 0"
@@ -98,6 +102,7 @@ script = ExtResource( 21 )
 [node name="mainHouse" type="StaticBody2D" parent="instanceSort"]
 position = Vector2( 169.384, 252.414 )
 collision_mask = 5
+script = ExtResource( 27 )
 
 [node name="Sprite" type="Sprite" parent="instanceSort/mainHouse"]
 texture = ExtResource( 19 )
@@ -106,9 +111,28 @@ texture = ExtResource( 19 )
 visible = false
 polygon = PoolVector2Array( 28.0998, 19.9427, 9.29437, 31.8617, -6.06784, 31.5968, -27.2571, 21.2671, -27.2571, 3.78592, -14.5435, -2.83572, 16.7106, -3.10059, 28.3647, 3.2562 )
 
+[node name="HealthBar" type="TextureProgress" parent="instanceSort/mainHouse"]
+margin_left = -28.6823
+margin_top = -47.5314
+margin_right = 30.3177
+margin_bottom = -38.5314
+value = 50.0
+texture_under = ExtResource( 28 )
+texture_over = ExtResource( 30 )
+texture_progress = ExtResource( 29 )
+tint_under = Color( 0.980392, 0, 0, 0.294118 )
+tint_over = Color( 1, 1, 1, 0 )
+tint_progress = Color( 0.0117647, 1, 0.0509804, 1 )
+nine_patch_stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="enemyHouse" type="StaticBody2D" parent="instanceSort"]
 position = Vector2( 843.525, 263.728 )
 collision_mask = 6
+script = ExtResource( 27 )
+unitOwner = "enemy"
 
 [node name="Sprite" type="Sprite" parent="instanceSort/enemyHouse"]
 position = Vector2( -0.414185, -11 )
@@ -117,6 +141,23 @@ texture = ExtResource( 20 )
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="instanceSort/enemyHouse"]
 visible = false
 polygon = PoolVector2Array( 29.4832, 7.48233, 10.2694, 20.869, -5.95209, 21.0265, -27.2133, 10.3171, -26.5833, -7.16428, -10.6768, -11.7315, 15.4666, -11.4165, 29.7982, -8.42418 )
+
+[node name="HealthBar" type="TextureProgress" parent="instanceSort/enemyHouse"]
+margin_left = -28.9393
+margin_top = -59.7892
+margin_right = 30.0607
+margin_bottom = -50.7892
+value = 50.0
+texture_under = ExtResource( 28 )
+texture_over = ExtResource( 30 )
+texture_progress = ExtResource( 29 )
+tint_under = Color( 0.980392, 0, 0, 0.294118 )
+tint_over = Color( 1, 1, 1, 0 )
+tint_progress = Color( 0.0117647, 1, 0.0509804, 1 )
+nine_patch_stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="buildings" type="YSort" parent="instanceSort"]
 
@@ -152,7 +193,7 @@ modulate = Color( 1, 0, 0, 1 )
 self_modulate = Color( 1, 0, 0, 1 )
 scale = Vector2( 1.29147, 1.20693 )
 frames = SubResource( 2 )
-frame = 3
+frame = 1
 speed_scale = 2.0
 playing = true
 
@@ -207,5 +248,4 @@ __meta__ = {
 margin_right = 44.0
 margin_bottom = 38.0
 icon = ExtResource( 3 )
-
 [connection signal="pressed" from="UI/Control/NinePatchRect/GridContainer/Button" to="." method="_on_Button_pressed"]

@@ -12,7 +12,7 @@
 radius = 4.98811
 height = 0.0
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=2]
 resource_name = "Swing"
 length = 0.4
 tracks/0/type = "value"
@@ -25,7 +25,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.1, 0.4 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 5.82933, -3.44209 ), Vector2( 10.7293, 4.07486 ), Vector2( 5.829, -3.442 ) ]
+"values": [ Vector2( 0, -7.5 ), Vector2( 16, -3 ), Vector2( 0, -7.5 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("SpearSprite:rotation_degrees")
@@ -40,7 +40,7 @@ tracks/1/keys = {
 "values": [ 0.0, 90.0, 0.0 ]
 }
 
-[sub_resource type="CircleShape2D" id=4]
+[sub_resource type="CircleShape2D" id=3]
 radius = 35.746
 
 [node name="KinematicBody2D" type="KinematicBody2D"]
@@ -58,7 +58,6 @@ position = Vector2( -0.47263, 2.78273 )
 shape = SubResource( 1 )
 
 [node name="StopTimer" type="Timer" parent="."]
-wait_time = 0.1
 one_shot = true
 
 [node name="HealthBar" type="TextureProgress" parent="."]
@@ -82,24 +81,21 @@ __meta__ = {
 script = ExtResource( 4 )
 
 [node name="SpearSprite" type="Sprite" parent="Weapon"]
-position = Vector2( 5.829, -3.442 )
+position = Vector2( 0, -7.5 )
+scale = Vector2( 0.743789, 0.697803 )
 texture = ExtResource( 3 )
+centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
-anims/Swing = SubResource( 3 )
+anims/Swing = SubResource( 2 )
 
 [node name="VisionRange" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
+visible = false
 position = Vector2( -0.594604, 3.27032 )
-shape = SubResource( 4 )
-
-[node name="Sprite" type="Sprite" parent="VisionRange"]
-modulate = Color( 0.94902, 0, 0.576471, 0.266667 )
-position = Vector2( -0.794602, 2.51622 )
-scale = Vector2( 3.35068, 3.00305 )
-texture = ExtResource( 5 )
-
+shape = SubResource( 3 )
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 [connection signal="body_entered" from="VisionRange" to="." method="_on_VisionRange_body_entered"]
+[connection signal="body_exited" from="VisionRange" to="." method="_on_VisionRange_body_exited"]

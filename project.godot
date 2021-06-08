@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "Builder",
+"language": "GDScript",
+"path": "res://Scripts/builder.gd"
+}, {
 "base": "Node",
 "class": "Pathfinding",
 "language": "GDScript",
@@ -18,16 +23,11 @@ _global_script_classes=[ {
 "class": "Soldier",
 "language": "GDScript",
 "path": "res://Scripts/soldier.gd"
-}, {
-"base": "KinematicBody2D",
-"class": "unit",
-"language": "GDScript",
-"path": "res://Scripts/builder.gd"
 } ]
 _global_script_class_icons={
+"Builder": "",
 "Pathfinding": "",
-"Soldier": "",
-"unit": ""
+"Soldier": ""
 }
 
 [application]

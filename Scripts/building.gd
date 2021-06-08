@@ -8,7 +8,7 @@ extends StaticBody2D
 var selected = false
 export var spawnRate = 5
 export var maxHealth = 20
-export var maxSoldier = 1
+export var maxSoldier = 4
 export var unitOwner = "ally"
 
 var currentHealth = 0
@@ -81,11 +81,10 @@ func _on_Timer_timeout():
 		
 		get_parent().get_parent().get_child(3).add_child(newSoldier)
 		if unitOwner == "enemy":
-			newSoldier.setDest(Vector2(512, 256))
+			newSoldier.setDest(Vector2(180, 256))
 			newSoldier.unitOwner = "enemy"
-			
 		else:
-			newSoldier.setDest(Vector2(512, 256))
+			newSoldier.setDest(Vector2(840, 260))
 		numOfSoldier += 1
 		
 		# reset progress bar

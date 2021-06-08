@@ -33,13 +33,13 @@ func _ready():
 	var mainHouseTile = env.world_to_map(mainHouse.position)
 	var enemyHouseTile = env.world_to_map(enemyHouse.position)
 	# diable point in mainHouseTile and enemyHoustTile
-	pathfinding.disablePoint(mainHouseTile)
-	pathfinding.disablePoint(mainHouseTile + Vector2(-1, 1))
-	pathfinding.disablePoint(mainHouseTile + Vector2(0, 1))
-	pathfinding.disablePoint(mainHouseTile + Vector2(1, 1))
-	pathfinding.disablePoint(enemyHouseTile)
-	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 0))
-	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 0))
+#	pathfinding.disablePoint(mainHouseTile)
+#	pathfinding.disablePoint(mainHouseTile + Vector2(-1, 1))
+#	pathfinding.disablePoint(mainHouseTile + Vector2(0, 1))
+#	pathfinding.disablePoint(mainHouseTile + Vector2(1, 1))
+#	pathfinding.disablePoint(enemyHouseTile)
+#	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 0))
+#	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 0))
 	
 	# add mainHouse and enemyHoust to invalid_tiles
 	invalid_tiles = invalid_tiles + [mainHouseTile, mainHouseTile + Vector2(-1, 1),
@@ -80,7 +80,8 @@ func _unhandled_input(event):
 	var mousePos = get_global_mouse_position()
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
-			deselectUnit()
+			if !canPlace:
+				deselectUnit()
 			if canPlace:
 				placeBuilding()
 			return

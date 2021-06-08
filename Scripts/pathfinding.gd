@@ -63,7 +63,8 @@ func getPath(start, end) -> Array:
 	if not aStar2D.has_point(id(startTile)) or not aStar2D.has_point(id(endTile)):
 		return []
 	var path = aStar2D.get_point_path(id(startTile), id(endTile))
-	path.remove(0)
+	if path.size() > 0:
+		path.remove(0)
 	
 	var pathWorld = []
 	for point in path:

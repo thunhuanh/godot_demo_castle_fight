@@ -1,5 +1,5 @@
 extends KinematicBody2D
-class_name unit
+class_name Builder
 
 var selected = false
 var dest = Vector2.ZERO
@@ -14,7 +14,7 @@ func setPathfinding(_pathfinding: Pathfinding):
 	self.pathfinding = _pathfinding
 	set_physics_process(true)
 	
-func _physics_process(delta):
+func _physics_process(_delta):
 	#reset velocity
 	velocity = Vector2.ZERO
 	
