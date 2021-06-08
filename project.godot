@@ -15,12 +15,18 @@ _global_script_classes=[ {
 "path": "res://Scripts/pathfinding.gd"
 }, {
 "base": "KinematicBody2D",
+"class": "Soldier",
+"language": "GDScript",
+"path": "res://Scripts/soldier.gd"
+}, {
+"base": "KinematicBody2D",
 "class": "unit",
 "language": "GDScript",
 "path": "res://Scripts/builder.gd"
 } ]
 _global_script_class_icons={
 "Pathfinding": "",
+"Soldier": "",
 "unit": ""
 }
 

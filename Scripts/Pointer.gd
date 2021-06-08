@@ -9,7 +9,7 @@ onready var animation = $AnimatedSprite
 func _ready():
 	animation.connect("animation_finished", self, "animFinished")
 
-func _process(delta):
+func _process(_delta):
 	if isClick:
 		#reset animation
 		animation.set_frame(0)

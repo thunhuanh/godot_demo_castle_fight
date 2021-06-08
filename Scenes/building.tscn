@@ -51,6 +51,7 @@ custom_styles/fg = SubResource( 2 )
 custom_styles/bg = SubResource( 3 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 1, 1, 1, 1 )
+max_value = 50.0
 step = 0.1
 percent_visible = false
 script = ExtResource( 3 )
@@ -88,5 +89,6 @@ custom_styles/bg = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_Timer_timeout"]
 [connection signal="timeout" from="BuildTimer" to="." method="_on_BuildTimer_timeout"]

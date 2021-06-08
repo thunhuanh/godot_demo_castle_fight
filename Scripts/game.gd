@@ -7,17 +7,20 @@ var selectedBuilder = null
 var dragStart = Vector2.ZERO
 var selectedRect = RectangleShape2D.new()
 var canPlace = false
-var invalid_tiles = []
+var invalid_tiles = [] # list of tile that bu	ilder cannot build on
 var buildDestination = Vector2.ZERO
 var buildDestTile
 var isBuilding = false
 
-export onready var building = preload("res://Scenes/building.tscn")
+signal updatePathfinding(pathfinding)
 
+export var building = preload("res://Scenes/building.tscn")
+export var soldier = preload("res://Scenes/soldier.tscn")
+
+onready var builder = $instanceSort/builder
 onready var uiControl = $UI/Control
 onready var selectRectDraw = $selectionRect
 onready var pointer = $pointer
-onready var builder = $instanceSort/builder
 onready var buildingPlacement = $building_placement
 onready var buildings = $instanceSort/buildings
 onready var mainHouse = $instanceSort/mainHouse
@@ -29,6 +32,7 @@ func _ready():
 	pathfinding.genMap(env)
 	var mainHouseTile = env.world_to_map(mainHouse.position)
 	var enemyHouseTile = env.world_to_map(enemyHouse.position)
+	# diable point in mainHouseTile and enemyHoustTile
 	pathfinding.disablePoint(mainHouseTile)
 	pathfinding.disablePoint(mainHouseTile + Vector2(-1, 1))
 	pathfinding.disablePoint(mainHouseTile + Vector2(0, 1))
@@ -37,15 +41,16 @@ func _ready():
 	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 0))
 	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 0))
 	
+	# add mainHouse and enemyHoust to invalid_tiles
 	invalid_tiles = invalid_tiles + [mainHouseTile, mainHouseTile + Vector2(-1, 1),
 	 mainHouseTile + Vector2(0, 1), enemyHouseTile, enemyHouseTile + Vector2(-1, 0),
 	 enemyHouseTile + Vector2(1, 0)]
 	
 	builder.setPathfinding(pathfinding)
 
-func _process(delta):
+func _process(_delta):
 	# checked if player 
-	if buildDestTile != null and reachedBuildingPlace(buildDestination) and isBuilding:
+	if buildDestTile != null and reachedBuildingPlace() and isBuilding:
 	
 		var tile = buildingPlacement.world_to_map(buildDestination)
 
@@ -57,13 +62,16 @@ func _process(delta):
 			# remove from pathfinding
 			invalid_tiles.append(tile)
 			pathfinding.disablePoint(tile)
+			# emit signal to soldier to update pathfinding graph
+			emit_signal("updatePathfinding", pathfinding)
+			
 			builder.setPathfinding(pathfinding)
 			builder.stop()
 
 		isBuilding = false
 		resetBuildPlacement()
 
-func reachedBuildingPlace(tar):
+func reachedBuildingPlace():
 	var destinationPos = buildingPlacement.map_to_world(buildDestTile, false)
 	if builder.position.distance_to(destinationPos + Vector2(16, 16)) <= 32:
 		return true
@@ -72,12 +80,12 @@ func _unhandled_input(event):
 	var mousePos = get_global_mouse_position()
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
-			deselectUnit(event)
+			deselectUnit()
 			if canPlace:
-				placeBuilding(event)
+				placeBuilding()
 			return
 		if dragging:
-			selectUnit(event)
+			selectUnit()
 			return
 		
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT:
@@ -106,7 +114,7 @@ func _unhandled_input(event):
 		if dragging:
 			selectRectDraw.update_status(dragStart, mousePos, dragging)
 
-func deselectUnit(event):
+func deselectUnit():
 	if selectedBuilder != null:
 		selectedBuilder.deselect()
 		uiControl.visible = false
@@ -114,7 +122,7 @@ func deselectUnit(event):
 	dragging = true
 	dragStart = get_global_mouse_position()
 
-func selectUnit(event):
+func selectUnit():
 	
 	#clear dragging rectangle
 	var dragEnd = get_global_mouse_position()
@@ -143,7 +151,7 @@ func selectUnit(event):
 			#hide/unhide ui control
 			uiControl.visible = true
 
-func placeBuilding(event):
+func placeBuilding():
 	var global_mouse_position := get_global_mouse_position()
 	buildDestination = global_mouse_position
 	var is_close_to_player := (
@@ -173,6 +181,10 @@ func placeBuilding(event):
 		# remove from pathfinding
 		invalid_tiles.append(tile)
 		pathfinding.disablePoint(tile)
+		
+		# emit signal to update pathfinding grapth of soldier
+		emit_signal("updatePathfinding", pathfinding)
+		
 		builder.setPathfinding(pathfinding)
 		builder.stop()
 
