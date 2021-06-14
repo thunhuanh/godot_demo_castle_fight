@@ -14,6 +14,8 @@ export var unitOwner = "ally"
 var currentHealth = 0
 var spawnProgress = 0 
 var numOfSoldier = 0
+var collisionRadius = 8
+
 onready var spawnTimer : Timer = $SpawnTimer
 onready var buildTimer : Timer = $BuildTimer
 onready var progress : TextureProgress = $SpawnProgress
@@ -72,8 +74,9 @@ func takeDamage(damage: int) -> void:
 func _on_Timer_timeout():
 	# spawn soldier
 	spawnProgress += 1
-	var isDoneBuilding = currentHealth == maxHealth
-	if numOfSoldier <= maxSoldier && isDoneBuilding && spawnProgress == spawnRate:
+	var isDoneBuilding = currentHealth == maxHealth 
+	var isNumOfSoldierValid = numOfSoldier <= maxSoldier
+	if isDoneBuilding && isNumOfSoldierValid && spawnProgress == spawnRate:
 		var newSoldier = soldier.instance()
 		
 		newSoldier.position = position + Vector2(16, 48)
@@ -89,12 +92,11 @@ func _on_Timer_timeout():
 		
 		# reset progress bar
 		progress.value = spawnRate
-		
 		spawnProgress = 0
 	
-	if progress.visible and numOfSoldier >= maxSoldier:
+	if progress.visible && numOfSoldier >= maxSoldier:
 		progress.visible = false
-	
+
 	if numOfSoldier == maxSoldier:
 		spawnTimer.queue_free()
 

@@ -3,7 +3,7 @@ extends Node2D
 const MAXIMUM_WORK_DISTANCE := 32
 
 var dragging = false
-var selectedBuilder = null
+var selectedBuilder : Builder = null
 var dragStart = Vector2.ZERO
 var selectedRect = RectangleShape2D.new()
 var canPlace = false
@@ -12,23 +12,29 @@ var buildDestination = Vector2.ZERO
 var buildDestTile
 var isBuilding = false
 
+remote var slaveDest : Vector2 = Vector2.ZERO
+
+signal setBuilder(builder)
 signal updatePathfinding(pathfinding)
 
 export var building = preload("res://Scenes/building.tscn")
 export var soldier = preload("res://Scenes/soldier.tscn")
 
-onready var builder = $instanceSort/builder
+var builder : Builder = null
 onready var uiControl = $UI/Control
-onready var selectRectDraw = $selectionRect
-onready var pointer = $pointer
-onready var buildingPlacement = $building_placement
-onready var buildings = $instanceSort/buildings
-onready var mainHouse = $instanceSort/mainHouse
-onready var enemyHouse = $instanceSort/enemyHouse
-onready var env = $enviroment
-onready var pathfinding = $pathfinding
+onready var selectRectDraw : Node2D = $selectionRect
+onready var pointer : Node2D = $pointer
+onready var buildingPlacement : TileMap = $building_placement
+onready var buildings  : YSort = $instanceSort/buildings
+onready var mainHouse : StaticBody2D = $instanceSort/mainHouse
+onready var enemyHouse : StaticBody2D = $instanceSort/enemyHouse
+onready var env : TileMap = $enviroment
+onready var pathfinding : Pathfinding = $pathfinding
 
 func _ready():
+	connect("setBuilder", self, "setBuilder")
+	# connect signal for multiplayer
+	
 	pathfinding.genMap(env)
 	var mainHouseTile = env.world_to_map(mainHouse.position)
 	var enemyHouseTile = env.world_to_map(enemyHouse.position)
@@ -45,11 +51,13 @@ func _ready():
 	invalid_tiles = invalid_tiles + [mainHouseTile, mainHouseTile + Vector2(-1, 1),
 	 mainHouseTile + Vector2(0, 1), enemyHouseTile, enemyHouseTile + Vector2(-1, 0),
 	 enemyHouseTile + Vector2(1, 0)]
-	
+
+remote func setBuilder(_builder: Builder) :
+	builder = _builder
 	builder.setPathfinding(pathfinding)
 
 func _process(_delta):
-	# checked if player 
+	# checked if player reach building place
 	if buildDestTile != null and reachedBuildingPlace() and isBuilding:
 	
 		var tile = buildingPlacement.world_to_map(buildDestination)
@@ -70,6 +78,7 @@ func _process(_delta):
 
 		isBuilding = false
 		resetBuildPlacement()
+			
 
 func reachedBuildingPlace():
 	var destinationPos = buildingPlacement.map_to_world(buildDestTile, false)
@@ -93,12 +102,12 @@ func _unhandled_input(event):
 		if event.is_pressed():
 			pointer.update_status(mousePos, true)
 			return
-		
-		#if mouse is release
+			
 		pointer.update_status(mousePos, false)
 		if selectedBuilder != null:
+			#if mouse is release
 			selectedBuilder.move_to(mousePos)
-
+			
 		return
 	
 	if event.is_action_pressed("ui_cancel"):
@@ -145,7 +154,7 @@ func selectUnit():
 	var intersectShapes = space.intersect_shape(query)
 	#select unit inside rectangle
 	for shape in intersectShapes:
-		if shape.collider.name == builder.name:
+		if builder && shape.collider.name == builder.name:
 			selectedBuilder = shape.collider
 			selectedBuilder.select()
 			

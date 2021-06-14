@@ -28,7 +28,7 @@ bg_color = Color( 0.976471, 0.211765, 0.00784314, 1 )
 [sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0.109804, 0.101961, 0.101961, 1 )
 
-[node name="StaticBody2D" type="StaticBody2D"]
+[node name="barrack" type="StaticBody2D"]
 collision_mask = 6
 script = ExtResource( 2 )
 

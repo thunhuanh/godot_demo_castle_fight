@@ -16,7 +16,8 @@ const moveThreshold : float = 1.0
 var pathfinding : Pathfinding
 var unitOwner : String = "ally"
 
-var attackTarget : Node2D = null
+var collisionRadius = 0
+var attackTarget = null
 var attackRange = 30
 
 onready var stopTimer : Timer = $StopTimer
@@ -28,8 +29,8 @@ onready var world : Node2D = get_node("/root/world")
 
 
 func _ready():
-	dest = position
-	finalDest = position
+	dest = global_position
+	finalDest = global_position
 	healthBar.max_value = maxHealth
 	healthBar.value = currentHealth	
 	world.connect("updatePathfinding", self, "setPathfinding")
@@ -44,34 +45,32 @@ func setPathfinding(_pathfinding: Pathfinding):
 	self.pathfinding = _pathfinding
 	
 func _physics_process(_delta):
-	dest = finalDest
-	if attackTarget:
-		dest = attackTarget.position
+	# set attack target
+	if cloestEnemy() != null :
+		attackTarget = weakref(cloestEnemy())
+		# move to target
+		dest = attackTarget.get_ref().global_position
 	
-	if possibleTarget.size() > 0:
-		var enemy = cloestEnemyWithinRange()
-		if enemy != null:
-			attackTarget = enemy
-			weapon.attack()
-		else:
-			attackTarget = null
+	if cloestEnemyWithinRange() != null:
+		attackTarget = weakref(cloestEnemyWithinRange())
+		# perform attack
+		weapon.attack()
 
-	
+
 	#reset velocity
 	velocity = Vector2.ZERO
 	var path = pathfinding.getPath(global_position, dest)
 
 	if path.size() > 0:
-		if position.distance_to(path[0]) > targetMax:
+		if global_position.distance_to(path[0]) > targetMax:
 			velocity = position.direction_to(path[0]) * speed
 			if get_slide_count() and stopTimer.is_stopped():
 				stopTimer.start()
-				lastPosition = position
+				lastPosition = global_position
 	
 	velocity = move_and_slide(velocity)
 
 	updateSprite()	
-
 	
 func setDest(_dest):
 	dest = _dest
@@ -86,14 +85,12 @@ func move_along_path(path):
 
 func stop():
 	velocity = Vector2.ZERO
-	dest = position
+	dest = global_position
 
 func takeDamage(damage: int) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0:
-		if possibleTarget.has(self):
-			possibleTarget.erase(self)
 		queue_free()
 		
 func _on_StopTimer_timeout():
@@ -102,15 +99,15 @@ func _on_StopTimer_timeout():
 			dest = position
 
 func compareDistance(target_a : Node2D, target_b : Node2D):
-	if position && target_a && target_b:
-		if position.distance_to(target_a.position) < position.distance_to(target_b.position):
+	if global_position && target_a && target_b:
+		if global_position.distance_to(target_a.global_position) <= global_position.distance_to(target_b.global_position):
 			return true
 		else:
 			return false
 	else:
 		return false
 
-func cloestEnemy() -> Soldier:
+func cloestEnemy() -> Node2D:
 	if possibleTarget.size() > 0:
 		possibleTarget.sort_custom(self, "compareDistance")
 		attackTarget = possibleTarget[0]
@@ -118,23 +115,25 @@ func cloestEnemy() -> Soldier:
 	else:
 		return null
 
-func cloestEnemyWithinRange() -> Soldier:
-	if cloestEnemy():
-		if cloestEnemy().position.distance_to(position) <= attackRange:
-			return cloestEnemy()
+func cloestEnemyWithinRange() -> Node2D:
+	var enemy : Node2D = cloestEnemy()
+	if enemy:
+		if enemy.global_position.distance_to(global_position) - enemy.collisionRadius <= attackRange:
+			return enemy
 		else:
 			return null
 	else:
 		return null
 
 func _on_VisionRange_body_entered(body : Node2D):
-	if body.get("unitOwner") != unitOwner && not body is Builder && not possibleTarget.has(body):
-		possibleTarget.append(body)
+	if not (body is Builder):
+		if body.get("unitOwner") != unitOwner && not possibleTarget.has(body):
+			possibleTarget.append(body)
 
 func _on_AnimationPlayer_animation_finished(_anim_name):
-	if attackTarget:
-		if attackTarget.has_method("takeDamage") && attackTarget.currentHealth > 0:
-			attackTarget.takeDamage(1)
+	if attackTarget != null && attackTarget.get_ref() != null:
+		if attackTarget.get_ref().has_method("takeDamage") && attackTarget.get_ref().currentHealth >= 0:
+			attackTarget.get_ref().takeDamage(1)
 		else: 
 			pass
 

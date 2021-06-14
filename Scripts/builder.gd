@@ -5,6 +5,10 @@ var selected = false
 var dest = Vector2.ZERO
 var velocity = Vector2.ZERO
 var pathfinding : Pathfinding
+var playerID = ""
+
+remote var slavePosition = Vector2.ZERO
+
 export var speed = 40.0
 
 func _ready():
@@ -16,15 +20,22 @@ func setPathfinding(_pathfinding: Pathfinding):
 	
 func _physics_process(_delta):
 	#reset velocity
-	velocity = Vector2.ZERO
-	
-	if position.distance_to(dest) > 1.5:
-		velocity = position.direction_to(dest) * speed
-	var path = pathfinding.getPath(global_position, dest)
+	if is_network_master():
+		velocity = Vector2.ZERO
+		
+		if position.distance_to(dest) > 1.5:
+			velocity = position.direction_to(dest) * speed
+		var path = []
+		if pathfinding:
+			path = pathfinding.getPath(global_position, dest)
 
-	if path.size() > 1:
-		if position.distance_to(path[0]) > 1.5:
-			velocity = position.direction_to(path[0]) * speed
+		if path.size() > 1:
+			if position.distance_to(path[0]) > 1.5:
+				velocity = position.direction_to(path[0]) * speed
+		rset_unreliable("slavePosition", position)
+	else:
+		position = slavePosition
+		
 	velocity = move_and_slide(velocity)
 	
 func move_to(tar):
