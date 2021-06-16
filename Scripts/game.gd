@@ -21,6 +21,8 @@ export var building = preload("res://Scenes/building.tscn")
 export var soldier = preload("res://Scenes/soldier.tscn")
 
 var builder : Builder = null
+var uniqueId = 0
+
 onready var uiControl = $UI/Control
 onready var selectRectDraw : Node2D = $selectionRect
 onready var pointer : Node2D = $pointer
@@ -32,31 +34,23 @@ onready var env : TileMap = $enviroment
 onready var pathfinding : Pathfinding = $pathfinding
 
 func _ready():
-	connect("setBuilder", self, "setBuilder")
+
 	# connect signal for multiplayer
-	
 	pathfinding.genMap(env)
 	var mainHouseTile = env.world_to_map(mainHouse.position)
 	var enemyHouseTile = env.world_to_map(enemyHouse.position)
-	# diable point in mainHouseTile and enemyHoustTile
-#	pathfinding.disablePoint(mainHouseTile)
-#	pathfinding.disablePoint(mainHouseTile + Vector2(-1, 1))
-#	pathfinding.disablePoint(mainHouseTile + Vector2(0, 1))
-#	pathfinding.disablePoint(mainHouseTile + Vector2(1, 1))
-#	pathfinding.disablePoint(enemyHouseTile)
-#	pathfinding.disablePoint(enemyHouseTile + Vector2(-1, 0))
-#	pathfinding.disablePoint(enemyHouseTile + Vector2(1, 0))
-	
-	# add mainHouse and enemyHoust to invalid_tiles
 	invalid_tiles = invalid_tiles + [mainHouseTile, mainHouseTile + Vector2(-1, 1),
 	 mainHouseTile + Vector2(0, 1), enemyHouseTile, enemyHouseTile + Vector2(-1, 0),
 	 enemyHouseTile + Vector2(1, 0)]
 
-remote func setBuilder(_builder: Builder) :
-	builder = _builder
-	builder.setPathfinding(pathfinding)
-
 func _process(_delta):
+	if builder == null:
+		if is_network_master():
+			uniqueId = 1
+		else:
+			uniqueId = get_tree().get_network_unique_id()
+		builder = get_node("instanceSort/" + str(uniqueId))
+	
 	# checked if player reach building place
 	if buildDestTile != null and reachedBuildingPlace() and isBuilding:
 	
@@ -78,8 +72,7 @@ func _process(_delta):
 
 		isBuilding = false
 		resetBuildPlacement()
-			
-
+	
 func reachedBuildingPlace():
 	var destinationPos = buildingPlacement.map_to_world(buildDestTile, false)
 	if builder.position.distance_to(destinationPos + Vector2(16, 16)) <= 32:
@@ -139,7 +132,6 @@ func selectUnit():
 	dragging = false
 	selectRectDraw.update_status(dragStart, dragEnd, dragging)
 	
-	
 	#extends rect
 	selectedRect.extents = (dragEnd - dragStart) / 2
 	
@@ -175,7 +167,7 @@ func placeBuilding():
 		var directionToMove = builderPos.direction_to(buildDestination)
 		builder.move_to(-directionToMove)
 
-	#reset place ment
+	#reset placement
 	resetBuildPlacement()
 	
 	#prepate tile for placing building

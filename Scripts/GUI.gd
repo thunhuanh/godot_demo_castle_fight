@@ -5,12 +5,11 @@ var port = 4242
 var maxPlayer = 10
 var serverAddress = "127.0.0.1"
 
-onready var unit = load("res://Scenes/unit.tscn")
-onready var world = get_node("/root/world")
+onready var unit = load("res://Scenes/player.tscn")
+onready var game = get_node("/root/world/Game")
 
 func _ready():
 	get_tree().connect("network_peer_connected", self, "_player_connected")
-	get_tree().connect("connected_to_server", self, "_connected_to_server_ok")
 	
 func host_server():	
 	var peer = NetworkedMultiplayerENet.new()
@@ -57,19 +56,18 @@ func game_setup(): #this will setup every player instance for every player
 		player_instance.set_name(str(1))
 		player_instance.set_network_master(1)
 		player_instance.position = Vector2(512, 256)
-		get_node("/root/world/instanceSort").add_child(player_instance)
+		get_node("/root/world/Game/instanceSort").add_child(player_instance)
 		player_instance.playerID = str(1) 
-		world.emit_signal("setBuilder", player_instance)
+
 
 	#Next every player will spawn every other player including the server's own client! Try to move this to server only 
 	for peer_id in players:
-		if peer_id != 1:
-			var player_instance = unit.instance()	
-			player_instance.set_name(str(peer_id))			
-			player_instance.set_network_master(peer_id)
-			player_instance.position = Vector2(512, 256)
-			get_node("/root/world/instanceSort").add_child(player_instance)
-			player_instance.playerID = str(peer_id)
-			world.emit_signal("setBuilder", player_instance)
+		var player_instance = unit.instance()	
+		player_instance.set_name(str(peer_id))			
+		player_instance.set_network_master(peer_id)
+		player_instance.position = Vector2(512, 256)
+		get_node("/root/world/Game/instanceSort").add_child(player_instance)
+		player_instance.playerID = str(peer_id)
+
 
 	

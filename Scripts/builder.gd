@@ -20,9 +20,9 @@ func setPathfinding(_pathfinding: Pathfinding):
 	
 func _physics_process(_delta):
 	#reset velocity
+
+	velocity = Vector2.ZERO
 	if is_network_master():
-		velocity = Vector2.ZERO
-		
 		if position.distance_to(dest) > 1.5:
 			velocity = position.direction_to(dest) * speed
 		var path = []
@@ -35,9 +35,10 @@ func _physics_process(_delta):
 		rset_unreliable("slavePosition", position)
 	else:
 		position = slavePosition
-		
+
 	velocity = move_and_slide(velocity)
-	
+
+
 func move_to(tar):
 	dest = tar
 	
@@ -48,10 +49,6 @@ func move_along_path(path):
 func stop():
 	velocity = Vector2.ZERO
 	dest = position
-#state machine
-	#idle dung yen : dest = position
-	#attacking : play anim, deal damage
-	#
 
 func select():
 	selected = true
