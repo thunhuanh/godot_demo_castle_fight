@@ -16,6 +16,8 @@ var spawnProgress = 0
 var numOfSoldier = 0
 var collisionRadius = 8
 
+var enemyMainHouseDest : Vector2 = Vector2.ZERO
+
 onready var spawnTimer : Timer = $SpawnTimer
 onready var buildTimer : Timer = $BuildTimer
 onready var progress : TextureProgress = $SpawnProgress
@@ -25,9 +27,12 @@ onready var sprite : Sprite = $Sprite
 onready var soldier = preload("res://Scenes/soldier.tscn")
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# correct color
+	# set enemy house tile
 	if unitOwner == "enemy":
-		sprite.modulate = Color(0, 0, 1)
+		enemyMainHouseDest = Vector2(160, 250)
+	else :
+		enemyMainHouseDest = Vector2(840, 260)
+		
 	
 	# build process
 	buildTimer.set_wait_time(maxHealth / 10)
@@ -60,12 +65,19 @@ func _process(delta):
 	if currentHealth == maxHealth:
 		progress.set_value(spawnProgress)
 
+	updateSprite()
 	buildProgress.value += delta
+
+func updateSprite():
+	# correct color
+	if unitOwner == "enemy":
+		sprite.modulate = Color(0, 0, 1)
+	
 
 func select():
 	selected = true
 
-func takeDamage(damage: int) -> void:
+remotesync func takeDamage(damage: int) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0 :
@@ -80,14 +92,12 @@ func _on_Timer_timeout():
 		var newSoldier = soldier.instance()
 		
 		newSoldier.position = position + Vector2(16, 48)
+		newSoldier.unitOwner = unitOwner
 		newSoldier.setPathfinding(get_parent().get_parent().get_parent().pathfinding)
 		
 		get_parent().get_parent().get_child(3).add_child(newSoldier)
-		if unitOwner == "enemy":
-			newSoldier.setDest(Vector2(180, 256))
-			newSoldier.unitOwner = "enemy"
-		else:
-			newSoldier.setDest(Vector2(840, 260))
+		newSoldier.setDest(enemyMainHouseDest)
+
 		numOfSoldier += 1
 		
 		# reset progress bar

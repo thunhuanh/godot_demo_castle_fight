@@ -2,19 +2,22 @@ extends KinematicBody2D
 class_name Soldier
 
 export var speed : float = 40.0
-export var maxHealth = 5
+export var maxHealth = 10
+var currentHealth = maxHealth
+var unitOwner : String = "ally"
 
-var currentHealth = 5
 var selected : bool = false
 var dest : Vector2 = Vector2.ZERO
 var finalDest : Vector2 = Vector2.ZERO
 var velocity : Vector2 = Vector2.ZERO
 var targetMax = 1
+const moveThreshold : float = 1.0
 var lastPosition : Vector2
 var possibleTarget = []
-const moveThreshold : float = 1.0
+
+remote var slavePosition : Vector2 = Vector2.ZERO
+
 var pathfinding : Pathfinding
-var unitOwner : String = "ally"
 
 var collisionRadius = 0
 var attackTarget = null
@@ -25,7 +28,7 @@ onready var weapon : Node2D = $Weapon
 onready var sprite : Sprite = $Sprite
 onready var weaponSprite : Sprite = $Weapon/SpearSprite
 onready var healthBar : TextureProgress = $HealthBar
-onready var world : Node2D = get_node("/root/world")
+onready var game : Node2D = get_node("/root/world/Game")
 
 
 func _ready():
@@ -33,10 +36,11 @@ func _ready():
 	finalDest = global_position
 	healthBar.max_value = maxHealth
 	healthBar.value = currentHealth	
-	world.connect("updatePathfinding", self, "setPathfinding")
+	game.connect("updatePathfinding", self, "setPathfinding")
 	# update pathfinding
 	
 func updateSprite():
+	# correct color
 	if unitOwner == "enemy":
 		weaponSprite.scale.x = -1
 		sprite.modulate = Color(0, 0, 1) # blue shade
@@ -45,6 +49,7 @@ func setPathfinding(_pathfinding: Pathfinding):
 	self.pathfinding = _pathfinding
 	
 func _physics_process(_delta):
+	dest = finalDest
 	# set attack target
 	if cloestEnemy() != null :
 		attackTarget = weakref(cloestEnemy())
@@ -54,25 +59,28 @@ func _physics_process(_delta):
 	if cloestEnemyWithinRange() != null:
 		attackTarget = weakref(cloestEnemyWithinRange())
 		# perform attack
-		weapon.attack()
+		weapon.rpc("attack")
 
 
 	#reset velocity
 	velocity = Vector2.ZERO
-	var path = pathfinding.getPath(global_position, dest)
+	if is_network_master():
+		var path = pathfinding.getPath(global_position, dest)
 
-	if path.size() > 0:
-		if global_position.distance_to(path[0]) > targetMax:
-			velocity = position.direction_to(path[0]) * speed
-			if get_slide_count() and stopTimer.is_stopped():
-				stopTimer.start()
-				lastPosition = global_position
-	
+		if path.size() > 0:
+			if global_position.distance_to(path[0]) > targetMax:
+				velocity = position.direction_to(path[0]) * speed
+				if get_slide_count() and stopTimer.is_stopped():
+					stopTimer.start()
+					lastPosition = global_position
+		rset_unreliable("slavePosition", position)
+	else:
+		position = slavePosition
 	velocity = move_and_slide(velocity)
 
 	updateSprite()	
 	
-func setDest(_dest):
+func setDest(_dest : Vector2):
 	dest = _dest
 	finalDest = _dest
 
@@ -87,7 +95,7 @@ func stop():
 	velocity = Vector2.ZERO
 	dest = global_position
 
-func takeDamage(damage: int) -> void:
+remotesync func takeDamage(damage: int) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0:
@@ -110,7 +118,7 @@ func compareDistance(target_a : Node2D, target_b : Node2D):
 func cloestEnemy() -> Node2D:
 	if possibleTarget.size() > 0:
 		possibleTarget.sort_custom(self, "compareDistance")
-		attackTarget = possibleTarget[0]
+		attackTarget = weakref(possibleTarget[0])
 		return possibleTarget[0]
 	else:
 		return null
@@ -133,7 +141,7 @@ func _on_VisionRange_body_entered(body : Node2D):
 func _on_AnimationPlayer_animation_finished(_anim_name):
 	if attackTarget != null && attackTarget.get_ref() != null:
 		if attackTarget.get_ref().has_method("takeDamage") && attackTarget.get_ref().currentHealth >= 0:
-			attackTarget.get_ref().takeDamage(1)
+			attackTarget.get_ref().rpc("takeDamage", 1)
 		else: 
 			pass
 

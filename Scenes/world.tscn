@@ -186,7 +186,7 @@ modulate = Color( 1, 0, 0, 1 )
 self_modulate = Color( 1, 0, 0, 1 )
 scale = Vector2( 1.29147, 1.20693 )
 frames = SubResource( 4 )
-frame = 5
+frame = 8
 speed_scale = 2.0
 playing = true
 
@@ -242,4 +242,5 @@ margin_bottom = 38.0
 icon = ExtResource( 3 )
 
 [node name="Control" parent="." instance=ExtResource( 7 )]
+
 [connection signal="pressed" from="Game/UI/Control/NinePatchRect/GridContainer/Button" to="Game" method="_on_Button_pressed"]

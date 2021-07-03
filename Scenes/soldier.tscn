@@ -94,6 +94,7 @@ anims/Swing = SubResource( 2 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
 position = Vector2( -0.594604, 3.27032 )
 shape = SubResource( 3 )
+
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 [connection signal="body_entered" from="VisionRange" to="." method="_on_VisionRange_body_entered"]

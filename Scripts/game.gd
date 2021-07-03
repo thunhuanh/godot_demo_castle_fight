@@ -44,31 +44,36 @@ func _ready():
 	 enemyHouseTile + Vector2(1, 0)]
 
 func _process(_delta):
-	if builder == null:
+	if builder == null && get_tree().has_network_peer():
 		if is_network_master():
 			uniqueId = 1
 		else:
 			uniqueId = get_tree().get_network_unique_id()
-		builder = get_node("instanceSort/" + str(uniqueId))
+
+		builder = get_node_or_null("instanceSort/" + str(uniqueId))
 	
 	# checked if player reach building place
-	if buildDestTile != null and reachedBuildingPlace() and isBuilding:
-	
-		var tile = buildingPlacement.world_to_map(buildDestination)
-
-		var newBuilding = building.instance()
-		newBuilding.position = tile * Vector2(32, 32)
+	if buildDestTile != null and reachedBuildingPlace() and isBuilding and builder != null:
+		rpc("buildBuilding", buildDestination, builder.unitOwner)
 		
-		if not tile in invalid_tiles:
-			buildings.add_child(newBuilding)
-			# remove from pathfinding
-			invalid_tiles.append(tile)
-			pathfinding.disablePoint(tile)
-			# emit signal to soldier to update pathfinding graph
-			emit_signal("updatePathfinding", pathfinding)
-			
-			builder.setPathfinding(pathfinding)
-			builder.stop()
+remotesync func buildBuilding(buidDest: Vector2, unitOwner : String = "ally"):
+	var tile = buildingPlacement.world_to_map(buidDest)
+
+	var newBuilding = building.instance()
+	newBuilding.unitOwner = unitOwner
+	newBuilding.position = tile * Vector2(32, 32)
+		
+	if not tile in invalid_tiles :
+		buildings.add_child(newBuilding)
+		# remove from pathfinding
+		invalid_tiles.append(tile)
+		pathfinding.disablePoint(tile)
+
+		# emit signal to soldier to update pathfinding graph
+		emit_signal("updatePathfinding", pathfinding)
+		
+		builder.setPathfinding(pathfinding)
+		builder.stop()
 
 		isBuilding = false
 		resetBuildPlacement()
@@ -85,7 +90,7 @@ func _unhandled_input(event):
 			if !canPlace:
 				deselectUnit()
 			if canPlace:
-				placeBuilding()
+				placeBuilding(get_global_mouse_position())
 			return
 		if dragging:
 			selectUnit()
@@ -126,7 +131,6 @@ func deselectUnit():
 	dragStart = get_global_mouse_position()
 
 func selectUnit():
-	
 	#clear dragging rectangle
 	var dragEnd = get_global_mouse_position()
 	dragging = false
@@ -153,47 +157,24 @@ func selectUnit():
 			#hide/unhide ui control
 			uiControl.visible = true
 
-func placeBuilding():
-	var global_mouse_position := get_global_mouse_position()
-	buildDestination = global_mouse_position
-	var is_close_to_player := (
-		global_mouse_position.distance_to(builder.global_position)
+remotesync func placeBuilding(_buildDest: Vector2):
+	buildDestination = _buildDest
+	var is_close_to_player : bool = (
+		buildDestination.distance_to(builder.global_position)
 		<= MAXIMUM_WORK_DISTANCE
 	)
 
-	#check
-	var builderPos = builder.position
-	if builderPos.distance_to(buildDestination) < 32:
-		var directionToMove = builderPos.direction_to(buildDestination)
-		builder.move_to(-directionToMove)
-
-	#reset placement
-	resetBuildPlacement()
-	
-	#prepate tile for placing building
-	var tile = buildingPlacement.world_to_map(global_mouse_position)
+	var tile = buildingPlacement.world_to_map(buildDestination)
 	buildDestTile = tile
-	
-	var newBuilding = building.instance()
-	newBuilding.position = tile * Vector2(32, 32)
-	
-	#if close to player and tile is valid then place building
-	if not tile in invalid_tiles && is_close_to_player:
-		buildings.add_child(newBuilding)
-		# remove from pathfinding
-		invalid_tiles.append(tile)
-		pathfinding.disablePoint(tile)
-		
-		# emit signal to update pathfinding grapth of soldier
-		emit_signal("updatePathfinding", pathfinding)
-		
-		builder.setPathfinding(pathfinding)
-		builder.stop()
 
-	#else move to build dest
-	elif not tile in invalid_tiles:
+	#prepare tile for placing building
+	if is_close_to_player:
+		rpc("buildBuilding", buildDestination, builder.unitOwner)
+	else:
 		isBuilding = true
-		builder.move_to(global_mouse_position)
+		builder.move_to(buildDestination)
+		
+	buildingPlacement.clear()
 	
 func resetBuildPlacement():
 	buildingPlacement.clear()

@@ -6,6 +6,9 @@ var dest = Vector2.ZERO
 var velocity = Vector2.ZERO
 var pathfinding : Pathfinding
 var playerID = ""
+export var unitOwner = "ally"
+
+onready var nameTag : Label = $Label
 
 remote var slavePosition = Vector2.ZERO
 
@@ -37,7 +40,14 @@ func _physics_process(_delta):
 		position = slavePosition
 
 	velocity = move_and_slide(velocity)
-
+	updateSprite()
+	
+func updateSprite():
+	if nameTag.text == "":
+		nameTag.text = playerID
+	
+	if unitOwner == "enemy":
+		$Sprite.modulate = Color(0, 0, 1) # blue shade
 
 func move_to(tar):
 	dest = tar
