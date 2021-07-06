@@ -47,7 +47,7 @@ func updateSprite():
 		nameTag.text = playerID
 	
 	if unitOwner == "enemy":
-		$Sprite.modulate = Color(0, 0, 1) # blue shade
+		$Sprite.modulate = Color(255, 0, 0) # blue shade
 
 func move_to(tar):
 	dest = tar

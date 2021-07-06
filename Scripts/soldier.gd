@@ -1,9 +1,11 @@
 extends KinematicBody2D
-class_name Soldier
+class_name soldier
 
 export var speed : float = 40.0
-export var maxHealth = 10
-var currentHealth = maxHealth
+export var attackRange = 30
+export var maxHealth : float = 10
+export var damage : float = 1
+export var currentHealth : float = maxHealth
 var unitOwner : String = "ally"
 
 var selected : bool = false
@@ -21,7 +23,7 @@ var pathfinding : Pathfinding
 
 var collisionRadius = 0
 var attackTarget = null
-var attackRange = 30
+
 
 onready var stopTimer : Timer = $StopTimer
 onready var weapon : Node2D = $Weapon
@@ -30,20 +32,19 @@ onready var weaponSprite : Sprite = $Weapon/SpearSprite
 onready var healthBar : TextureProgress = $HealthBar
 onready var game : Node2D = get_node("/root/world/Game")
 
-
 func _ready():
 	dest = global_position
 	finalDest = global_position
 	healthBar.max_value = maxHealth
 	healthBar.value = currentHealth	
-	game.connect("updatePathfinding", self, "setPathfinding")
+	if not game.is_connected("updupdatePathfinding", self,  "setPathfinding"):
+		game.connect("updatePathfinding", self, "setPathfinding")
 	# update pathfinding
-	
 func updateSprite():
 	# correct color
 	if unitOwner == "enemy":
 		weaponSprite.scale.x = -1
-		sprite.modulate = Color(0, 0, 1) # blue shade
+		sprite.modulate = Color(255, 0, 0) # red shade
 
 func setPathfinding(_pathfinding: Pathfinding):
 	self.pathfinding = _pathfinding
@@ -95,7 +96,7 @@ func stop():
 	velocity = Vector2.ZERO
 	dest = global_position
 
-remotesync func takeDamage(damage: int) -> void:
+remotesync func takeDamage(damage: float) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0:
@@ -137,13 +138,6 @@ func _on_VisionRange_body_entered(body : Node2D):
 	if not (body is Builder):
 		if body.get("unitOwner") != unitOwner && not possibleTarget.has(body):
 			possibleTarget.append(body)
-
-func _on_AnimationPlayer_animation_finished(_anim_name):
-	if attackTarget != null && attackTarget.get_ref() != null:
-		if attackTarget.get_ref().has_method("takeDamage") && attackTarget.get_ref().currentHealth >= 0:
-			attackTarget.get_ref().rpc("takeDamage", 1)
-		else: 
-			pass
 
 func _on_VisionRange_body_exited(body: Node2D):
 	if possibleTarget.has(body):

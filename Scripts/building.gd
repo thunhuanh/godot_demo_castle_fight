@@ -7,7 +7,7 @@ extends StaticBody2D
 
 var selected = false
 export var spawnRate = 5
-export var maxHealth = 20
+export var maxHealth = 200
 export var maxSoldier = 4
 export var unitOwner = "ally"
 
@@ -24,7 +24,7 @@ onready var progress : TextureProgress = $SpawnProgress
 onready var buildProgress : ProgressBar = $BuildProgress
 onready var healthBar : ProgressBar = $HealthBar
 onready var sprite : Sprite = $Sprite
-onready var soldier = preload("res://Scenes/soldier.tscn")
+onready var soldier = preload("res://Scenes/melee.tscn")
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# set enemy house tile
@@ -35,7 +35,7 @@ func _ready():
 		
 	
 	# build process
-	buildTimer.set_wait_time(maxHealth / 10)
+	buildTimer.set_wait_time(maxHealth / 20)
 	buildTimer.one_shot = true
 	buildTimer.start()
 	
@@ -71,13 +71,12 @@ func _process(delta):
 func updateSprite():
 	# correct color
 	if unitOwner == "enemy":
-		sprite.modulate = Color(0, 0, 1)
+		sprite.modulate = Color(255, 0, 0)
 	
-
 func select():
 	selected = true
 
-remotesync func takeDamage(damage: int) -> void:
+remotesync func takeDamage(damage: float) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0 :

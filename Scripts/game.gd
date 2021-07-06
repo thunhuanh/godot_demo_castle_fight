@@ -12,13 +12,10 @@ var buildDestination = Vector2.ZERO
 var buildDestTile
 var isBuilding = false
 
-remote var slaveDest : Vector2 = Vector2.ZERO
-
 signal setBuilder(builder)
 signal updatePathfinding(pathfinding)
 
 export var building = preload("res://Scenes/building.tscn")
-export var soldier = preload("res://Scenes/soldier.tscn")
 
 var builder : Builder = null
 var uniqueId = 0
@@ -71,9 +68,9 @@ remotesync func buildBuilding(buidDest: Vector2, unitOwner : String = "ally"):
 
 		# emit signal to soldier to update pathfinding graph
 		emit_signal("updatePathfinding", pathfinding)
-		
-		builder.setPathfinding(pathfinding)
-		builder.stop()
+		if builder != null:
+			builder.setPathfinding(pathfinding)
+			builder.stop()
 
 		isBuilding = false
 		resetBuildPlacement()

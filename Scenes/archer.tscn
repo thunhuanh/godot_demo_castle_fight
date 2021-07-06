@@ -1,0 +1,89 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=3]
+[ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=4]
+[ext_resource path="res://Assets/bounding box.png" type="Texture" id=5]
+[ext_resource path="res://Assets/archer.png" type="Texture" id=6]
+[ext_resource path="res://Assets/bow.png" type="Texture" id=7]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 4.98811
+height = 0.0
+
+[sub_resource type="Animation" id=2]
+resource_name = "Swing"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("BowSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -7.5 ), Vector2( 16, -3 ), Vector2( 0, -7.5 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("BowSprite:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 90.0, 0.0 ]
+}
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 60.0
+
+[node name="rangeSoldier" type="KinematicBody2D"]
+
+[node name="Sprite" type="Sprite" parent="."]
+use_parent_material = true
+texture = ExtResource( 6 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -0.47263, 2.78273 )
+shape = SubResource( 1 )
+
+[node name="StopTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="HealthBar" type="TextureProgress" parent="."]
+margin_left = -8.0
+margin_top = -11.0
+margin_right = 8.0
+margin_bottom = -8.0
+value = 50.0
+texture_under = ExtResource( 4 )
+texture_over = ExtResource( 5 )
+texture_progress = ExtResource( 3 )
+tint_under = Color( 0.996078, 0.192157, 0.0627451, 0.419608 )
+tint_over = Color( 0, 0, 0, 0 )
+tint_progress = Color( 0.309804, 0.894118, 0.729412, 1 )
+nine_patch_stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Weapon" type="Node2D" parent="."]
+
+[node name="BowSprite" type="Sprite" parent="Weapon"]
+position = Vector2( 0, -7.5 )
+scale = Vector2( 0.743789, 0.697803 )
+texture = ExtResource( 7 )
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
+anims/Swing = SubResource( 2 )
+
+[node name="VisionRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
+position = Vector2( -0.594604, 3.27032 )
+shape = SubResource( 3 )
