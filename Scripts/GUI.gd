@@ -12,7 +12,9 @@ onready var startButton : Button = $Start
 onready var serverAddressInput : LineEdit = $ServerAddress
 
 func _ready():
-	get_tree().connect("network_peer_connected", self, "_player_connected")
+	var error = get_tree().connect("network_peer_connected", self, "_player_connected")
+	if error:
+		print(error)
 	
 func host_server():	
 	if len(serverAddress.split(".", true)) < 4:
@@ -25,7 +27,7 @@ func host_server():
 	print("Hosting...This is my ID: ", str(get_tree().get_network_unique_id()))
 	hostButton.hide()
 	joinButton.hide()
-	startButton.hide()
+#	startButton.hide()
 	serverAddressInput.hide()
 
 func join_server():

@@ -16,7 +16,7 @@ height = 0.0
 resource_name = "Swing"
 length = 0.4
 tracks/0/type = "value"
-tracks/0/path = NodePath("SpearSprite:position")
+tracks/0/path = NodePath("WeaponSprite:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -28,7 +28,7 @@ tracks/0/keys = {
 "values": [ Vector2( 0, -7.5 ), Vector2( 16, -3 ), Vector2( 0, -7.5 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("SpearSprite:rotation_degrees")
+tracks/1/path = NodePath("WeaponSprite:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -41,15 +41,13 @@ tracks/1/keys = {
 }
 
 [sub_resource type="CircleShape2D" id=3]
-radius = 60.0
+radius = 100.0
 
 [node name="melee" type="KinematicBody2D"]
 collision_layer = 4
 collision_mask = 13
 script = ExtResource( 2 )
 speed = 20.0
-damage = 1.5
-currentHealth = 50.0
 
 [node name="Sprite" type="Sprite" parent="."]
 use_parent_material = true
@@ -83,7 +81,7 @@ __meta__ = {
 [node name="Weapon" type="Node2D" parent="."]
 script = ExtResource( 4 )
 
-[node name="SpearSprite" type="Sprite" parent="Weapon"]
+[node name="WeaponSprite" type="Sprite" parent="Weapon"]
 position = Vector2( 0, -7.5 )
 scale = Vector2( 0.743789, 0.697803 )
 texture = ExtResource( 3 )

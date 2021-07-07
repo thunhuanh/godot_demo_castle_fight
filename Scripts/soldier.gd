@@ -3,9 +3,9 @@ class_name soldier
 
 export var speed : float = 40.0
 export var attackRange = 30
-export var maxHealth : float = 10
-export var damage : float = 1
-export var currentHealth : float = maxHealth
+export var maxHealth  = 10
+export var damage  = 1
+var currentHealth = maxHealth
 var unitOwner : String = "ally"
 
 var selected : bool = false
@@ -24,11 +24,10 @@ var pathfinding : Pathfinding
 var collisionRadius = 0
 var attackTarget = null
 
-
 onready var stopTimer : Timer = $StopTimer
 onready var weapon : Node2D = $Weapon
 onready var sprite : Sprite = $Sprite
-onready var weaponSprite : Sprite = $Weapon/SpearSprite
+onready var weaponSprite : Sprite = $Weapon/WeaponSprite
 onready var healthBar : TextureProgress = $HealthBar
 onready var game : Node2D = get_node("/root/world/Game")
 
@@ -36,9 +35,12 @@ func _ready():
 	dest = global_position
 	finalDest = global_position
 	healthBar.max_value = maxHealth
+	currentHealth = maxHealth
 	healthBar.value = currentHealth	
-	if not game.is_connected("updupdatePathfinding", self,  "setPathfinding"):
-		game.connect("updatePathfinding", self, "setPathfinding")
+	if not game.is_connected("updatePathfinding", self,  "setPathfinding"):
+		var err = game.connect("updatePathfinding", self, "setPathfinding")
+		if err:
+			print(err)
 	# update pathfinding
 func updateSprite():
 	# correct color
@@ -50,6 +52,9 @@ func setPathfinding(_pathfinding: Pathfinding):
 	self.pathfinding = _pathfinding
 	
 func _physics_process(_delta):
+	updateSprite()	
+
+func updateMovementAndAction():
 	dest = finalDest
 	# set attack target
 	if cloestEnemy() != null :
@@ -61,7 +66,6 @@ func _physics_process(_delta):
 		attackTarget = weakref(cloestEnemyWithinRange())
 		# perform attack
 		weapon.rpc("attack")
-
 
 	#reset velocity
 	velocity = Vector2.ZERO
@@ -78,8 +82,7 @@ func _physics_process(_delta):
 	else:
 		position = slavePosition
 	velocity = move_and_slide(velocity)
-
-	updateSprite()	
+	
 	
 func setDest(_dest : Vector2):
 	dest = _dest
@@ -96,8 +99,8 @@ func stop():
 	velocity = Vector2.ZERO
 	dest = global_position
 
-remotesync func takeDamage(damage: float) -> void:
-	currentHealth -= damage
+remotesync func takeDamage(_damage: int) -> void:
+	currentHealth -= _damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0:
 		queue_free()

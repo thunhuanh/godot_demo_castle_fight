@@ -1,5 +1,7 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
+[ext_resource path="res://Scripts/archer.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Bow.gd" type="Script" id=2]
 [ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=3]
 [ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=4]
 [ext_resource path="res://Assets/bounding box.png" type="Texture" id=5]
@@ -11,37 +13,38 @@ radius = 4.98811
 height = 0.0
 
 [sub_resource type="Animation" id=2]
-resource_name = "Swing"
-length = 0.4
+resource_name = "Shoot"
 tracks/0/type = "value"
-tracks/0/path = NodePath("BowSprite:position")
+tracks/0/path = NodePath("WeaponSprite:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.4 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.201388, 0.601388, 0.999955, 0.999999, 1.39996 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 0, -7.5 ), Vector2( 16, -3 ), Vector2( 0, -7.5 ) ]
+"values": [ Vector2( 0.854742, -5.6047 ), Vector2( 1.96963, -7.85135 ), Vector2( 1.41218, -6.96958 ), Vector2( 1.96963, -7.85135 ), Vector2( 0.854742, -6.08782 ), Vector2( 1.41218, -6.96958 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("BowSprite:rotation_degrees")
+tracks/1/path = NodePath("WeaponSprite:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.4 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.6, 0.999999 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ 0.0, 90.0, 0.0 ]
+"values": [ 0.0, -20.0, -20.0, 0.0 ]
 }
 
-[sub_resource type="CircleShape2D" id=3]
-radius = 60.0
+[sub_resource type="CircleShape2D" id=4]
+radius = 90.0
 
-[node name="rangeSoldier" type="KinematicBody2D"]
+[node name="archer" type="KinematicBody2D"]
+script = ExtResource( 1 )
+attackRange = 70
 
 [node name="Sprite" type="Sprite" parent="."]
 use_parent_material = true
@@ -72,18 +75,25 @@ __meta__ = {
 }
 
 [node name="Weapon" type="Node2D" parent="."]
+script = ExtResource( 2 )
 
-[node name="BowSprite" type="Sprite" parent="Weapon"]
-position = Vector2( 0, -7.5 )
+[node name="WeaponSprite" type="Sprite" parent="Weapon"]
+position = Vector2( 0.854742, -5.6047 )
 scale = Vector2( 0.743789, 0.697803 )
 texture = ExtResource( 7 )
 centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
-anims/Swing = SubResource( 2 )
+anims/Shoot = SubResource( 2 )
 
 [node name="VisionRange" type="Area2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
 position = Vector2( -0.594604, 3.27032 )
-shape = SubResource( 3 )
+shape = SubResource( 4 )
+
+[connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
+[connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
+[connection signal="body_entered" from="VisionRange" to="." method="_on_VisionRange_body_entered"]
+[connection signal="body_exited" from="VisionRange" to="." method="_on_VisionRange_body_exited"]

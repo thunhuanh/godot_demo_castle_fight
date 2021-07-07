@@ -8,6 +8,7 @@ extends StaticBody2D
 var selected = false
 export var spawnRate = 5
 export var maxHealth = 200
+export var buildTime = 10
 export var maxSoldier = 4
 export var unitOwner = "ally"
 
@@ -24,7 +25,7 @@ onready var progress : TextureProgress = $SpawnProgress
 onready var buildProgress : ProgressBar = $BuildProgress
 onready var healthBar : ProgressBar = $HealthBar
 onready var sprite : Sprite = $Sprite
-onready var soldier = preload("res://Scenes/melee.tscn")
+onready var soldier = preload("res://Scenes/archer.tscn")
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# set enemy house tile
@@ -35,7 +36,7 @@ func _ready():
 		
 	
 	# build process
-	buildTimer.set_wait_time(maxHealth / 20)
+	buildTimer.set_wait_time(buildTime)
 	buildTimer.one_shot = true
 	buildTimer.start()
 	
@@ -53,9 +54,7 @@ func _ready():
 	healthBar.set_max(maxHealth)
 	
 	# build progress
-	buildProgress.max_value = maxHealth / 10
-	buildProgress.value = 0
-	buildProgress.step = 0
+	buildProgress.max_value = maxHealth
 	
 	healthBar.visible = false
 
@@ -66,8 +65,8 @@ func _process(delta):
 		progress.set_value(spawnProgress)
 
 	updateSprite()
-	buildProgress.value += delta
-
+	buildProgress.value += (maxHealth / buildTime) * delta
+	
 func updateSprite():
 	# correct color
 	if unitOwner == "enemy":
@@ -76,7 +75,7 @@ func updateSprite():
 func select():
 	selected = true
 
-remotesync func takeDamage(damage: float) -> void:
+remotesync func takeDamage(damage: int) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0 :
@@ -86,10 +85,10 @@ func _on_Timer_timeout():
 	# spawn soldier
 	spawnProgress += 1
 	var isDoneBuilding = currentHealth == maxHealth 
-	var isNumOfSoldierValid = numOfSoldier <= maxSoldier
+	var isNumOfSoldierValid = true
 	if isDoneBuilding && isNumOfSoldierValid && spawnProgress == spawnRate:
 		var newSoldier = soldier.instance()
-		
+
 		newSoldier.position = position + Vector2(16, 48)
 		newSoldier.unitOwner = unitOwner
 		newSoldier.setPathfinding(get_parent().get_parent().get_parent().pathfinding)

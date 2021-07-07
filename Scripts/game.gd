@@ -12,7 +12,6 @@ var buildDestination = Vector2.ZERO
 var buildDestTile
 var isBuilding = false
 
-signal setBuilder(builder)
 signal updatePathfinding(pathfinding)
 
 export var building = preload("res://Scenes/building.tscn")

@@ -31,6 +31,7 @@ bg_color = Color( 0.109804, 0.101961, 0.101961, 1 )
 [node name="barrack" type="StaticBody2D"]
 collision_mask = 6
 script = ExtResource( 2 )
+buildTime = 5
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 16, 16 )
