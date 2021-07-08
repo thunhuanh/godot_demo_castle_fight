@@ -1,7 +1,5 @@
 extends Node2D
 
-
-
 var isClick = false
 var pos = Vector2.ZERO
 onready var animation = $AnimatedSprite

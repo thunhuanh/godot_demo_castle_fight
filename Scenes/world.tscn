@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Tilesets/env_tileset.res" type="TileSet" id=1]
 [ext_resource path="res://Tilesets/road_tileset.res" type="TileSet" id=2]
-[ext_resource path="res://Assets/castle.png" type="Texture" id=3]
+[ext_resource path="res://Assets/barrack.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=4]
 [ext_resource path="res://Assets/panel.png" type="Texture" id=5]
 [ext_resource path="res://Scenes/GUI.tscn" type="PackedScene" id=7]
@@ -102,6 +102,19 @@ cell_size = Vector2( 32, 32 )
 cell_custom_transform = Transform2D( 32, 0, 0, 32, 0, 0 )
 format = 1
 
+[node name="camera2D" type="Camera2D" parent="Game"]
+scale = Vector2( 0.7, 0.7 )
+anchor_mode = 0
+current = true
+drag_margin_h_enabled = true
+drag_margin_v_enabled = true
+drag_margin_left = 0.0
+drag_margin_top = 0.0
+drag_margin_right = 0.0
+drag_margin_bottom = 0.0
+script = ExtResource( 4 )
+Speed = 25.0
+
 [node name="pathfinding" type="Node2D" parent="Game"]
 script = ExtResource( 21 )
 
@@ -186,16 +199,9 @@ modulate = Color( 1, 0, 0, 1 )
 self_modulate = Color( 1, 0, 0, 1 )
 scale = Vector2( 1.29147, 1.20693 )
 frames = SubResource( 4 )
-frame = 5
+frame = 3
 speed_scale = 2.0
 playing = true
-
-[node name="camera2D" type="Camera2D" parent="Game"]
-scale = Vector2( 0.7, 0.7 )
-anchor_mode = 0
-current = true
-script = ExtResource( 4 )
-Speed = 25.0
 
 [node name="UI" type="CanvasLayer" parent="Game"]
 
@@ -210,10 +216,10 @@ __meta__ = {
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 0.259949
-margin_top = 482.52
-margin_right = 983.26
-margin_bottom = 558.52
+margin_left = 0.821167
+margin_top = 485.46
+margin_right = 983.821
+margin_bottom = 561.46
 texture = ExtResource( 5 )
 patch_margin_left = 10
 patch_margin_top = 10

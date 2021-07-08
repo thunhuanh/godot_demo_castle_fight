@@ -15,6 +15,7 @@ func _ready():
 	var error = get_tree().connect("network_peer_connected", self, "_player_connected")
 	if error:
 		print(error)
+
 	
 func host_server():	
 	if len(serverAddress.split(".", true)) < 4:

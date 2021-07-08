@@ -40,6 +40,10 @@ config/icon="res://icon.png"
 
 settings/fps/force_fps=60
 
+[display]
+
+window/stretch/aspect="expand"
+
 [layer_names]
 
 2d_physics/layer_1="Building"

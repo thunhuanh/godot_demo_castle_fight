@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=2]
 
-[ext_resource path="res://Assets/castle.png" type="Texture" id=1]
+[ext_resource path="res://Assets/barrack.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/building.gd" type="Script" id=2]
 [ext_resource path="res://Scripts/ProgressBar.gd" type="Script" id=3]
 [ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=4]

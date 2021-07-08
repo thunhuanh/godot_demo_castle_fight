@@ -14,6 +14,7 @@ height = 0.0
 
 [sub_resource type="Animation" id=2]
 resource_name = "Shoot"
+step = 0.05
 tracks/0/type = "value"
 tracks/0/path = NodePath("WeaponSprite:position")
 tracks/0/interp = 1
@@ -21,10 +22,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.201388, 0.601388, 0.999955, 0.999999, 1.39996 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.201388, 0.95, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 0.854742, -5.6047 ), Vector2( 1.96963, -7.85135 ), Vector2( 1.41218, -6.96958 ), Vector2( 1.96963, -7.85135 ), Vector2( 0.854742, -6.08782 ), Vector2( 1.41218, -6.96958 ) ]
+"values": [ Vector2( 0.854742, -5.6047 ), Vector2( 1.96963, -7.85135 ), Vector2( 1.41218, -6.96958 ), Vector2( 1.41218, -6.96958 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("WeaponSprite:rotation_degrees")
@@ -33,18 +34,18 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.2, 0.6, 0.999999 ),
+"times": PoolRealArray( 0, 0.2, 0.95, 1 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
 "values": [ 0.0, -20.0, -20.0, 0.0 ]
 }
 
-[sub_resource type="CircleShape2D" id=4]
+[sub_resource type="CircleShape2D" id=3]
 radius = 90.0
 
 [node name="archer" type="KinematicBody2D"]
 script = ExtResource( 1 )
-attackRange = 70
+attackRange = 90
 
 [node name="Sprite" type="Sprite" parent="."]
 use_parent_material = true
@@ -87,11 +88,11 @@ centered = false
 anims/Shoot = SubResource( 2 )
 
 [node name="VisionRange" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
+visible = false
 position = Vector2( -0.594604, 3.27032 )
-shape = SubResource( 4 )
+shape = SubResource( 3 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

@@ -86,27 +86,25 @@ func _unhandled_input(event):
 			if !canPlace:
 				deselectUnit()
 			if canPlace:
-				placeBuilding(get_global_mouse_position())
+				placeBuilding(mousePos)
 			return
 		if dragging:
 			selectUnit()
 			return
-		
+
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT:
 		if event.is_pressed():
 			pointer.update_status(mousePos, true)
-			return
+#			return
 			
 		pointer.update_status(mousePos, false)
 		if selectedBuilder != null:
 			#if mouse is release
 			selectedBuilder.move_to(mousePos)
-			
-		return
-	
+
 	if event.is_action_pressed("ui_cancel"):
 		resetBuildPlacement()
-	
+
 	if event is InputEventMouseMotion:
 		if canPlace:
 			buildingPlacement.clear()
