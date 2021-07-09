@@ -10,10 +10,10 @@ func _physics_process(delta):
 func _on_StopTimer_timeout():
 	._on_StopTimer_timeout()
 
-func _on_AnimationPlayer_animation_finished(anim_name):
+func _on_AnimationPlayer_animation_finished(_anim_name):
 	if attackTarget != null && attackTarget.get_ref() != null:
 		if attackTarget.get_ref().has_method("takeDamage") && attackTarget.get_ref().currentHealth >= 0:
-			attackTarget.get_ref().rpc_unreliable("takeDamage", damage)
+			attackTarget.get_ref().rpc("takeDamage", damage)
 			
 		else: 
 			pass

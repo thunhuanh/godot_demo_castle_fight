@@ -11,6 +11,7 @@ export var maxHealth = 200
 export var buildTime = 10
 export var maxSoldier = 4
 export var unitOwner = "ally"
+export var type = "melee"
 
 var currentHealth = 0
 var spawnProgress = 0 
@@ -25,7 +26,10 @@ onready var progress : TextureProgress = $SpawnProgress
 onready var buildProgress : ProgressBar = $BuildProgress
 onready var healthBar : ProgressBar = $HealthBar
 onready var sprite : Sprite = $Sprite
-onready var soldier = preload("res://Scenes/archer.tscn")
+onready var meleeSoldier = preload("res://Scenes/melee.tscn")
+onready var rangeSoldier = preload("res://Scenes/archer.tscn")
+
+var soldier : PackedScene = null
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# set enemy house tile
@@ -33,8 +37,10 @@ func _ready():
 		enemyMainHouseDest = Vector2(160, 250)
 	else :
 		enemyMainHouseDest = Vector2(840, 260)
-		
 	
+	soldier = meleeSoldier
+	if type != "melee":
+		soldier = rangeSoldier
 	# build process
 	buildTimer.set_wait_time(buildTime)
 	buildTimer.one_shot = true
@@ -81,8 +87,21 @@ remotesync func takeDamage(damage: int) -> void:
 	if currentHealth <= 0 :
 		queue_free()
 
-func _on_Timer_timeout():
-	# spawn soldier
+func _on_BuildTimer_timeout():
+	# start spawn soldier
+	spawnTimer.start()
+	progress.visible = true
+	
+	# set health bar and delete buildTimer
+	buildProgress.visible = false
+	healthBar.set_value(maxHealth)
+	currentHealth = maxHealth
+	healthBar.visible = true
+	buildTimer.queue_free()
+	pass # Replace with function body.
+
+func _on_SpawnTimer_timeout():
+		# spawn soldier
 	spawnProgress += 1
 	var isDoneBuilding = currentHealth == maxHealth 
 	var isNumOfSoldierValid = true
@@ -108,17 +127,3 @@ func _on_Timer_timeout():
 	if numOfSoldier == maxSoldier:
 		spawnTimer.queue_free()
 
-	pass # Replace with function body.
-
-func _on_BuildTimer_timeout():
-	# start spawn soldier
-	spawnTimer.start()
-	progress.visible = true
-	
-	# set health bar and delete buildTimer
-	buildProgress.visible = false
-	healthBar.set_value(maxHealth)
-	currentHealth = maxHealth
-	healthBar.visible = true
-	buildTimer.queue_free()
-	pass # Replace with function body.

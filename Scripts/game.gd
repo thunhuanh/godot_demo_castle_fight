@@ -14,8 +14,11 @@ var isBuilding = false
 
 signal updatePathfinding(pathfinding)
 
-export var building = preload("res://Scenes/building.tscn")
+export var barrack = preload("res://Scenes/building.tscn")
+export var archeryRange = preload("res://Scenes/archeryRange.tscn")
 
+var building : PackedScene = null
+var buildingType = ""
 var builder : Builder = null
 var uniqueId = 0
 
@@ -30,7 +33,6 @@ onready var env : TileMap = $enviroment
 onready var pathfinding : Pathfinding = $pathfinding
 
 func _ready():
-
 	# connect signal for multiplayer
 	pathfinding.genMap(env)
 	var mainHouseTile = env.world_to_map(mainHouse.position)
@@ -50,10 +52,15 @@ func _process(_delta):
 	
 	# checked if player reach building place
 	if buildDestTile != null and reachedBuildingPlace() and isBuilding and builder != null:
-		rpc("buildBuilding", buildDestination, builder.unitOwner)
-		
-remotesync func buildBuilding(buidDest: Vector2, unitOwner : String = "ally"):
+		rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)
+	
+remotesync func buildBuilding(buidDest: Vector2, _buildingType : String, unitOwner : String = "ally"):
 	var tile = buildingPlacement.world_to_map(buidDest)
+
+	if _buildingType == "barrack":
+		building = barrack
+	else:
+		building = archeryRange
 
 	var newBuilding = building.instance()
 	newBuilding.unitOwner = unitOwner
@@ -95,7 +102,7 @@ func _unhandled_input(event):
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT:
 		if event.is_pressed():
 			pointer.update_status(mousePos, true)
-#			return
+			return
 			
 		pointer.update_status(mousePos, false)
 		if selectedBuilder != null:
@@ -163,7 +170,7 @@ remotesync func placeBuilding(_buildDest: Vector2):
 
 	#prepare tile for placing building
 	if is_close_to_player:
-		rpc("buildBuilding", buildDestination, builder.unitOwner)
+		rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)		
 	else:
 		isBuilding = true
 		builder.move_to(buildDestination)
@@ -174,6 +181,18 @@ func resetBuildPlacement():
 	buildingPlacement.clear()
 	canPlace = false
 
+remotesync func setBuilding(_building: PackedScene):
+	building = _building
+
 func _on_Button_pressed():
 	buildingPlacement.clear()
 	canPlace = !canPlace
+	rpc("setBuilding", barrack)
+	buildingType = "barrack"
+
+func _on_archeryRange_pressed():
+	buildingPlacement.clear()
+	canPlace = !canPlace
+	rpc("setBuilding", archeryRange)
+	buildingType = "archery"	
+

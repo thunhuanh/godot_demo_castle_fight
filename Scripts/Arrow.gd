@@ -11,6 +11,8 @@ var target = null
 
 func init(_transform, _target):
 	global_transform = _transform
+	if unitOwner != "ally":
+		scale.x = -1
 	velocity = transform.x * speed
 	target = _target
 	
@@ -22,18 +24,25 @@ func seek():
 	
 	return steer
 
+func updateSprite():
+	pass
+
 func _physics_process(delta):
 	velocity += seek() * delta
 	rotation = velocity.angle()
 	position += velocity * delta 
+	
+	updateSprite()
+	
+	if target.get_ref() == null || target == null:
+		queue_free()
 
 func _on_Arrow_body_entered(_body: Node2D):
 	if _body.unitOwner == unitOwner:
 		return
-	queue_free()
-#	if target != null && target.get_ref() != null:
-#		if target.get_ref().has_method("takeDamage") && target.get_ref().currentHealth >= 0:
-#			target.get_ref().rpc_unreliable("takeDamage", damage)
-#			queue_free()
+	if target != null && target.get_ref() != null:
+		if target.get_ref().has_method("takeDamage") && target.get_ref().unitOwner != unitOwner && target.get_ref().currentHealth >= 0:
+			target.get_ref().rpc("takeDamage", damage)
+			queue_free()
 
 

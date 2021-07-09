@@ -47,7 +47,8 @@ radius = 100.0
 collision_layer = 4
 collision_mask = 13
 script = ExtResource( 2 )
-speed = 20.0
+speed = 25.0
+maxHealth = 30
 
 [node name="Sprite" type="Sprite" parent="."]
 use_parent_material = true

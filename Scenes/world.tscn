@@ -1,10 +1,11 @@
-[gd_scene load_steps=34 format=2]
+[gd_scene load_steps=35 format=2]
 
 [ext_resource path="res://Tilesets/env_tileset.res" type="TileSet" id=1]
 [ext_resource path="res://Tilesets/road_tileset.res" type="TileSet" id=2]
 [ext_resource path="res://Assets/barrack.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/Camera2D.gd" type="Script" id=4]
 [ext_resource path="res://Assets/panel.png" type="Texture" id=5]
+[ext_resource path="res://Assets/archeryRange.png" type="Texture" id=6]
 [ext_resource path="res://Scenes/GUI.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Scripts/game.gd" type="Script" id=8]
 [ext_resource path="res://Scripts/SelectionRect.gd" type="Script" id=9]
@@ -199,7 +200,7 @@ modulate = Color( 1, 0, 0, 1 )
 self_modulate = Color( 1, 0, 0, 1 )
 scale = Vector2( 1.29147, 1.20693 )
 frames = SubResource( 4 )
-frame = 3
+frame = 4
 speed_scale = 2.0
 playing = true
 
@@ -234,19 +235,27 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -20.0
-margin_top = -20.0
-margin_right = 20.0
-margin_bottom = 20.0
+margin_left = -41.165
+margin_top = -19.3213
+margin_right = 66.835
+margin_bottom = 21.6787
+columns = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Button" type="Button" parent="Game/UI/Control/NinePatchRect/GridContainer"]
+[node name="barrack" type="Button" parent="Game/UI/Control/NinePatchRect/GridContainer"]
 margin_right = 44.0
 margin_bottom = 38.0
 icon = ExtResource( 3 )
 
+[node name="archeryRange" type="Button" parent="Game/UI/Control/NinePatchRect/GridContainer"]
+margin_left = 48.0
+margin_right = 92.0
+margin_bottom = 38.0
+icon = ExtResource( 6 )
+
 [node name="Control" parent="." instance=ExtResource( 7 )]
 
-[connection signal="pressed" from="Game/UI/Control/NinePatchRect/GridContainer/Button" to="Game" method="_on_Button_pressed"]
+[connection signal="pressed" from="Game/UI/Control/NinePatchRect/GridContainer/barrack" to="Game" method="_on_Button_pressed"]
+[connection signal="pressed" from="Game/UI/Control/NinePatchRect/GridContainer/archeryRange" to="Game" method="_on_archeryRange_pressed"]

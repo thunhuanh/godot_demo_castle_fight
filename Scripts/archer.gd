@@ -9,14 +9,14 @@ func _ready():
 
 func _physics_process(_delta):
 	._physics_process(_delta)
-	if isAttack == false:
-		dest = finalDest
+	isAttack = false
+	dest = finalDest
 	# set attack target
 	if cloestEnemy() != null :
 		attackTarget = weakref(cloestEnemy())
 		# move to target
 		dest = position
-		isAttack = true		
+		isAttack = true
 	
 	if cloestEnemyWithinRange() != null:
 		attackTarget = weakref(cloestEnemyWithinRange())
@@ -48,8 +48,8 @@ func _on_StopTimer_timeout():
 func _on_AnimationPlayer_animation_finished(_anim_name):
 	if attackTarget != null && attackTarget.get_ref() != null:
 		var arrowInstance = arrow.instance()
-		arrowInstance.init(transform, attackTarget)
 		arrowInstance.unitOwner = unitOwner
+		arrowInstance.init(transform, attackTarget)
 		
 		get_node("/root/world/Game/instanceSort/entities").add_child(arrowInstance)
 

@@ -83,7 +83,6 @@ func updateMovementAndAction():
 		position = slavePosition
 	velocity = move_and_slide(velocity)
 	
-	
 func setDest(_dest : Vector2):
 	dest = _dest
 	finalDest = _dest
@@ -106,9 +105,10 @@ remotesync func takeDamage(_damage: int) -> void:
 		queue_free()
 		
 func _on_StopTimer_timeout():
-	if get_slide_count():
-		if lastPosition.distance_to(dest) < lastPosition.distance_to(dest) + moveThreshold:
-			dest = position
+	pass
+#	if get_slide_count():
+#		if lastPosition.distance_to(dest) < lastPosition.distance_to(dest) + moveThreshold:
+#			dest = position
 
 func compareDistance(target_a : Node2D, target_b : Node2D):
 	if global_position && target_a && target_b:
