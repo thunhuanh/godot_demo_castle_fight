@@ -4,23 +4,21 @@
 [ext_resource path="res://Scripts/Arrow.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 32.9366, 0.133031 )
+extents = Vector2( 55.5025, 0.176954 )
 
 [node name="Arrow" type="Area2D"]
 script = ExtResource( 2 )
-steer_force = 1000
-damage = 2
+speed = 125
+steer_force = 1500
 
 [node name="ArrowSprite" type="Sprite" parent="."]
-modulate = Color( 1, 0.964706, 0.141176, 1 )
-self_modulate = Color( 1, 0, 0, 1 )
 rotation = 1.5708
 scale = Vector2( 0.75, 0.75 )
 texture = ExtResource( 1 )
+offset = Vector2( 0.5, -8 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-position = Vector2( -1.63396, -0.236239 )
+position = Vector2( 3.64729, -1.06581e-14 )
 scale = Vector2( 0.0722293, 11.6556 )
 shape = SubResource( 1 )
 

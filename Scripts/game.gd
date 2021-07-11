@@ -14,7 +14,7 @@ var isBuilding = false
 
 signal updatePathfinding(pathfinding)
 
-export var barrack = preload("res://Scenes/building.tscn")
+export var barrack = preload("res://Scenes/barrack.tscn")
 export var archeryRange = preload("res://Scenes/archeryRange.tscn")
 
 var building : PackedScene = null
@@ -185,12 +185,17 @@ remotesync func setBuilding(_building: PackedScene):
 	building = _building
 
 func _on_Button_pressed():
+	if isBuilding:
+		return
 	buildingPlacement.clear()
+	canPlace = false
 	canPlace = !canPlace
 	rpc("setBuilding", barrack)
 	buildingType = "barrack"
 
 func _on_archeryRange_pressed():
+	if isBuilding:
+		return
 	buildingPlacement.clear()
 	canPlace = !canPlace
 	rpc("setBuilding", archeryRange)

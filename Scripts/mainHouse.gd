@@ -8,10 +8,11 @@ remote var slaveCurrentHealth = maxHealth
 var collisionRadius = 20
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	healthBar.step = 0
 	healthBar.set_max(maxHealth)
 	healthBar.set_value(currentHealth)
 
-remotesync func takeDamage(damage : int) -> void:
+remotesync func takeDamage(damage : float) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0 :

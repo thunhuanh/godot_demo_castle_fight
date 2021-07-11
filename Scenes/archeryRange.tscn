@@ -8,8 +8,8 @@
 [ext_resource path="res://Assets/archeryRange.png" type="Texture" id=6]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 8.02253
-height = 14.0592
+radius = 12.6374
+height = 5.96066
 
 [sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.976471, 0.211765, 0.00784314, 1 )
@@ -36,20 +36,20 @@ maxSoldier = 5
 type = "range"
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 16, 16 )
 texture = ExtResource( 6 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 15.7898, 23.7783 )
+position = Vector2( -0.0536003, 0.053421 )
 rotation = 1.5708
 shape = SubResource( 1 )
 
 [node name="SpawnTimer" type="Timer" parent="."]
 
 [node name="HealthBar" type="ProgressBar" parent="."]
-margin_top = -15.0
-margin_right = 32.0
-margin_bottom = -1.0
+margin_left = -16.0
+margin_top = -25.0
+margin_right = 16.0
+margin_bottom = -20.0
 custom_styles/fg = SubResource( 2 )
 custom_styles/bg = SubResource( 3 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
@@ -63,10 +63,10 @@ __meta__ = {
 }
 
 [node name="SpawnProgress" type="TextureProgress" parent="."]
-margin_left = 34.8127
-margin_top = 0.18729
-margin_right = 39.8127
-margin_bottom = 32.1873
+margin_left = 21.9707
+margin_top = -16.0
+margin_right = 26.9707
+margin_bottom = 16.0
 max_value = 5.0
 value = 3.0
 rounded = true
@@ -84,9 +84,11 @@ __meta__ = {
 [node name="BuildTimer" type="Timer" parent="."]
 
 [node name="BuildProgress" type="ProgressBar" parent="."]
-margin_top = -15.0
-margin_right = 32.0
-margin_bottom = -1.0
+margin_left = -16.0
+margin_top = -25.0
+margin_right = 16.0
+margin_bottom = -5.0
+rect_scale = Vector2( 1, 0.25 )
 custom_styles/fg = SubResource( 4 )
 custom_styles/bg = SubResource( 5 )
 __meta__ = {

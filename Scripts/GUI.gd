@@ -13,6 +13,7 @@ onready var serverAddressInput : LineEdit = $ServerAddress
 
 func _ready():
 	get_tree().connect("network_peer_connected", self, "_player_connected")
+#	startButton.hide()
 
 func host_server():	
 	if len(serverAddress.split(".", true)) < 4:
@@ -25,7 +26,7 @@ func host_server():
 	print("Hosting...This is my ID: ", str(get_tree().get_network_unique_id()))
 	hostButton.hide()
 	joinButton.hide()
-	startButton.hide()
+#	startButton.hide()
 	serverAddressInput.hide()
 
 func join_server():
@@ -42,18 +43,18 @@ func _player_connected(id):
 	print("Hello other players. I just connected and I wont see this message!: ", id)
 	register_player(id)
 	
-remotesync func toggleStart():
-	if startButton.visible:
-		startButton.hide()
-	else:
-		startButton.show()
+remotesync func showStart():
+	startButton.show()
+		
+remotesync func hideStart():
+	startButton.hide()
 
 remote func register_player(id): 
 	# adding player to register list
 	players[id] = ""
 	if len(players) >= maxPlayer:
-		rpc("toggleStart")
-		toggleStart()
+		rpc("showStart")
+		showStart()
 	
 	# Server sends the info of existing players back to the new player
 	if get_tree().is_network_server():

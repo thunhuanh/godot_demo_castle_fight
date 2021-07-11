@@ -2,24 +2,24 @@ extends Area2D
 
 export var speed = 300
 export var steer_force = 10
-export var damage = 1
-
+onready var sprite = $ArrowSprite
+var damage = 1
 var unitOwner = "ally"
 
 var velocity = Vector2.ZERO
 var target = null
 
-func init(_transform, _target):
+func init(_transform, _target, _damage):
 	global_transform = _transform
-	if unitOwner != "ally":
-		scale.x = -1
+			
 	velocity = transform.x * speed
 	target = _target
+	damage = _damage
 	
 func seek():
 	var steer = Vector2.ZERO
 	if target.get_ref():
-		var desired = (target.get_ref().position - position).normalized() * speed
+		var desired = global_position.direction_to(target.get_ref().global_position) * speed
 		steer = (desired - velocity).normalized() * steer_force
 	
 	return steer
