@@ -17,8 +17,3 @@ remotesync func takeDamage(damage : float) -> void:
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0 :
 		queue_free()
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

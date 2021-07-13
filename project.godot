@@ -36,6 +36,11 @@ config/name="DEMO_CASTLE_FIGHT"
 run/main_scene="res://Scenes/world.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+HolepunchNode="*res://addons/Holepunch/holepunch_node.gd"
+Holepunch="*res://addons/Holepunch/holepunch.gd"
+
 [debug]
 
 settings/fps/force_fps=60

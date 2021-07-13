@@ -12,12 +12,14 @@ func _physics_process(_delta):
 
 func updateSprite():
 	if unitOwner == "enemy":
+		weaponSprite.scale.x = -1
 		sprite.modulate = Color(255, 0, 0) # red shade
 	
 	if attackTarget and attackTarget.get_ref():
 		weaponSprite.scale.x = sign(attackTarget.get_ref().position.x - position.x)
 	else:
-		weaponSprite.scale.x = 1
+		if velocity.x != 0:
+			weaponSprite.scale.x = sign(velocity.x)
 
 func _on_StopTimer_timeout():
 	._on_StopTimer_timeout()

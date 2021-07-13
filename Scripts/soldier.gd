@@ -52,7 +52,7 @@ func _ready():
 func setPathfinding(_pathfinding: Pathfinding):
 	self.pathfinding = _pathfinding
 
-func updateMovementAndAction(delta):
+func updateMovementAndAction(_delta):
 	dest = finalDest
 	isAttacking = false
 	# set attack target

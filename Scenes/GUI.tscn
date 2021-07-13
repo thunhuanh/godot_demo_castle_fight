@@ -5,42 +5,79 @@
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Host" type="Button" parent="."]
-margin_left = 456.0
-margin_top = 104.0
-margin_right = 568.0
-margin_bottom = 144.0
+margin_left = 392.58
+margin_top = 248.0
+margin_right = 480.58
+margin_bottom = 288.0
 text = "Host"
 
 [node name="Join" type="Button" parent="."]
-margin_left = 456.0
-margin_top = 168.0
-margin_right = 568.0
-margin_bottom = 211.0
+margin_left = 504.58
+margin_top = 248.0
+margin_right = 592.58
+margin_bottom = 291.0
 text = "Join"
 
 [node name="Start" type="Button" parent="."]
-margin_left = 456.0
-margin_top = 232.0
-margin_right = 568.0
-margin_bottom = 272.0
+margin_left = 392.58
+margin_top = 304.0
+margin_right = 592.58
+margin_bottom = 344.0
 text = "Start"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ServerAddress" type="LineEdit" parent="."]
-margin_left = 408.0
-margin_top = 48.0
-margin_right = 608.0
-margin_bottom = 72.0
-text = "127.0.0.1"
+[node name="GameCode" type="LineEdit" parent="."]
+margin_left = 392.58
+margin_top = 184.0
+margin_right = 592.58
+margin_bottom = 208.0
+text = "CODE"
 placeholder_text = "ip address"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameCodeLabel" type="Label" parent="."]
+margin_left = 304.0
+margin_top = 184.0
+margin_right = 382.0
+margin_bottom = 208.0
+text = "GameCode: "
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerName" type="LineEdit" parent="."]
+margin_left = 392.58
+margin_top = 216.0
+margin_right = 592.58
+margin_bottom = 240.0
+text = "NAT_Name"
+placeholder_text = "ip address"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerNameLabel" type="Label" parent="."]
+margin_left = 304.0
+margin_top = 216.0
+margin_right = 382.0
+margin_bottom = 240.0
+text = "Name: "
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -48,4 +85,5 @@ __meta__ = {
 [connection signal="pressed" from="Host" to="." method="host_server"]
 [connection signal="pressed" from="Join" to="." method="join_server"]
 [connection signal="pressed" from="Start" to="." method="game_setup"]
-[connection signal="text_changed" from="ServerAddress" to="." method="_on_LineEdit_text_changed"]
+[connection signal="text_changed" from="GameCode" to="." method="_on_LineEdit_text_changed"]
+[connection signal="text_changed" from="PlayerName" to="." method="_on_PlayerName_text_changed"]

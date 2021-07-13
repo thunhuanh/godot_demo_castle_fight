@@ -6,6 +6,7 @@ var dest = Vector2.ZERO
 var velocity = Vector2.ZERO
 var pathfinding : Pathfinding
 var playerID = ""
+var playerName = ""
 export var unitOwner = "ally"
 
 onready var nameTag : Label = $Label
@@ -44,7 +45,7 @@ func _physics_process(_delta):
 	
 func updateSprite():
 	if nameTag.text == "":
-		nameTag.text = playerID
+		nameTag.text = playerName
 	
 	if unitOwner == "enemy":
 		$Sprite.modulate = Color(255, 0, 0) # blue shade
