@@ -7,8 +7,6 @@ var serverAddress = "127.0.0.1"
 var playerName = "Name"
 var gameCode = "CODE1"
 var _myPort = 0
-var _hostPort = 0
-var _hostAddr = ""
 
 onready var unit = load("res://Scenes/player.tscn")
 onready var hostButton : Button = $Host
@@ -18,19 +16,21 @@ onready var gameCodeInput : LineEdit = $GameCode
 onready var gameCodeLabel : Label = $GameCodeLabel
 onready var playerNameInput : LineEdit = $PlayerName
 onready var playerNameLabel : Label = $PlayerNameLabel
-onready var holePunching : HolepunchNode = get_node("/root/world/HolePunch")
 
 func _ready():
-	holePunching.connect("hole_punched", self, "_hole_punched")
-	get_tree().connect("network_peer_connected", self, "_player_connected")
+
+	var err = get_tree().connect("network_peer_connected", self, "_player_connected")
+	if err:
+		print(err)
+	gameCode = gameCodeInput.text
+	playerName = playerNameInput.text
 
 #	startButton.hide()
 
 func _hole_punched(myPort, hostPort, hostAddress):
 	_myPort = myPort
-	_hostPort = hostPort
-	_hostAddr = hostAddress
-	print(myPort, hostPort, hostAddress)
+	port = hostPort
+	serverAddress = hostAddress
 
 func host_server():	
 #	if len(serverAddress.split(".", true)) < 4:
@@ -46,27 +46,28 @@ func host_server():
 #	startButton.hide()
 	gameCodeInput.hide()
 	gameCodeLabel.hide()
-	
+
 	playerNameInput.hide()
 	playerNameLabel.hide()
-	
+
 	gameCode = gameCodeInput.text
 	playerName = playerNameInput.text
-	
-	# begin hole punching
-	holePunching.start_traversal(gameCode, true, playerName)
 
 func join_server():
 	var peer_join = NetworkedMultiplayerENet.new()
 	peer_join.create_client(serverAddress, port)
 	get_tree().set_network_peer(peer_join)	
+
 	#checks:
 	print("Joining...This is my ID: ", str(get_tree().get_network_unique_id())) 
 	hostButton.hide()
 	joinButton.hide()
+
 	gameCodeInput.hide()
-	
-	holePunching.finalize_peers(gameCode)
+	gameCodeLabel.hide()
+
+	playerNameInput.hide()
+	playerNameLabel.hide()
 
 func _player_connected(id): 
 	print("Hello other players. I just connected and I wont see this message!: ", id)
@@ -81,7 +82,6 @@ remotesync func hideStart():
 remote func register_player(id, name): 
 	# adding player to register list
 	players[id] = name
-	print(players)
 	if len(players) >= maxPlayer:
 		rpc("showStart")
 		showStart()
@@ -120,7 +120,8 @@ func game_setup(): #this will setup every player instance for every player
 		player_instance.playerID = str(peer_id)
 
 func _on_LineEdit_text_changed(new_text: String):
-	gameCode = new_text
+	serverAddress = new_text
 
 func _on_PlayerName_text_changed(new_text):
 	playerName = new_text
+

@@ -14,32 +14,35 @@ __meta__ = {
 
 [node name="Host" type="Button" parent="."]
 margin_left = 392.58
-margin_top = 248.0
+margin_top = 256.0
 margin_right = 480.58
-margin_bottom = 288.0
+margin_bottom = 280.0
 text = "Host"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Join" type="Button" parent="."]
-margin_left = 504.58
-margin_top = 248.0
-margin_right = 592.58
-margin_bottom = 291.0
+margin_left = 504.0
+margin_top = 256.0
+margin_right = 591.0
+margin_bottom = 280.0
 text = "Join"
 
 [node name="Start" type="Button" parent="."]
-margin_left = 392.58
-margin_top = 304.0
-margin_right = 592.58
-margin_bottom = 344.0
+margin_left = 393.0
+margin_top = 296.0
+margin_right = 592.0
+margin_bottom = 320.0
 text = "Start"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="GameCode" type="LineEdit" parent="."]
-margin_left = 392.58
+margin_left = 392.0
 margin_top = 184.0
-margin_right = 592.58
+margin_right = 592.0
 margin_bottom = 208.0
 text = "CODE"
 placeholder_text = "ip address"
@@ -52,7 +55,7 @@ margin_left = 304.0
 margin_top = 184.0
 margin_right = 382.0
 margin_bottom = 208.0
-text = "GameCode: "
+text = "Address: "
 align = 1
 valign = 1
 __meta__ = {
@@ -60,9 +63,9 @@ __meta__ = {
 }
 
 [node name="PlayerName" type="LineEdit" parent="."]
-margin_left = 392.58
+margin_left = 392.0
 margin_top = 216.0
-margin_right = 592.58
+margin_right = 592.0
 margin_bottom = 240.0
 text = "NAT_Name"
 placeholder_text = "ip address"

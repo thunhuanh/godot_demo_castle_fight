@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=35 format=2]
 
 [ext_resource path="res://Tilesets/env_tileset.res" type="TileSet" id=1]
 [ext_resource path="res://Tilesets/road_tileset.res" type="TileSet" id=2]
@@ -30,9 +30,6 @@
 [ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=28]
 [ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=29]
 [ext_resource path="res://Assets/progress-bar-over.png" type="Texture" id=30]
-[ext_resource path="res://Scenes/barrack.tscn" type="PackedScene" id=31]
-[ext_resource path="res://Scenes/archeryRange.tscn" type="PackedScene" id=32]
-[ext_resource path="res://addons/Holepunch/holepunch_node.gd" type="Script" id=33]
 
 [sub_resource type="TileSet" id=1]
 0/name = "valid_placement.png 0"
@@ -80,11 +77,6 @@ animations = [ {
 
 [node name="world" type="Node2D"]
 position = Vector2( -1, 1 )
-
-[node name="HolePunch" type="Node" parent="."]
-script = ExtResource( 33 )
-rendevouz_address = "127.0.0.1"
-rendevouz_port = 12345
 
 [node name="Game" type="Node2D" parent="."]
 script = ExtResource( 8 )
@@ -200,18 +192,6 @@ shape = SubResource( 3 )
 
 [node name="buildings" type="YSort" parent="Game/instanceSort"]
 
-[node name="barrack2" parent="Game/instanceSort/buildings" instance=ExtResource( 31 )]
-position = Vector2( 769, 191 )
-unitOwner = "enemy"
-
-[node name="barrack" parent="Game/instanceSort/buildings" instance=ExtResource( 31 )]
-position = Vector2( 705, 255 )
-unitOwner = "enemy"
-
-[node name="archeryRange" parent="Game/instanceSort/buildings" instance=ExtResource( 32 )]
-position = Vector2( 385, 223 )
-unitOwner = "enemy"
-
 [node name="entities" type="YSort" parent="Game/instanceSort"]
 
 [node name="selectionRect" type="Node2D" parent="Game"]
@@ -226,7 +206,7 @@ modulate = Color( 1, 0, 0, 1 )
 self_modulate = Color( 1, 0, 0, 1 )
 scale = Vector2( 1.29147, 1.20693 )
 frames = SubResource( 4 )
-frame = 1
+frame = 7
 speed_scale = 2.0
 playing = true
 

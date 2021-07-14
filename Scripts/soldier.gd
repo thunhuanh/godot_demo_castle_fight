@@ -46,7 +46,9 @@ func _ready():
 	healthBar.value = currentHealth	
 	
 	if not game.is_connected("updatePathfinding", self,  "setPathfinding"):
-		game.connect("updatePathfinding", self, "setPathfinding")
+		var err = game.connect("updatePathfinding", self, "setPathfinding")
+		if err :
+			print(err)
 	# update pathfinding
 
 func setPathfinding(_pathfinding: Pathfinding):

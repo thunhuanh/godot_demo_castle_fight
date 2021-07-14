@@ -89,7 +89,6 @@ func _process(delta):
 					recieved_peer_info = true
 					start_peer_contact()
 
-
 func _handle_greet_message(peer_name, peer_port, my_port):
 	if own_port != my_port:
 		own_port = my_port
@@ -190,11 +189,14 @@ func finalize_peers(id):
 func start_traversal(id, is_player_host, player_name):
 	if server_udp.is_listening():
 		server_udp.close()
-
+	
 	var err = server_udp.listen(rendevouz_port, "*")
 	if err != OK:
 		print("Error listening on port: " + str(rendevouz_port) + " to server: " + rendevouz_address)
-
+	else:
+		print("listening on port: " + str(rendevouz_port) + " to server: " + rendevouz_address)
+		
+	
 	is_host = is_player_host
 	client_name = player_name
 	found_server = false
@@ -234,6 +236,6 @@ func _exit_tree():
 
 func _ready():
 	p_timer = Timer.new()
-	get_node("/root/").add_child(p_timer)
+	get_node("/root/").call_deferred("add_child", p_timer)
 	p_timer.connect("timeout", self, "_ping_peer")
 	p_timer.wait_time = 0.1
