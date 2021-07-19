@@ -184,7 +184,15 @@ func resetBuildPlacement():
 remotesync func setBuilding(_building: PackedScene):
 	building = _building
 
-func _on_Button_pressed():
+func _on_archeryRange_pressed():
+	if isBuilding:
+		return
+	buildingPlacement.clear()
+	canPlace = !canPlace
+	rpc("setBuilding", archeryRange)
+	buildingType = "archery"
+
+func _on_barrack_pressed():
 	if isBuilding:
 		return
 	buildingPlacement.clear()
@@ -192,12 +200,3 @@ func _on_Button_pressed():
 	canPlace = !canPlace
 	rpc("setBuilding", barrack)
 	buildingType = "barrack"
-
-func _on_archeryRange_pressed():
-	if isBuilding:
-		return
-	buildingPlacement.clear()
-	canPlace = !canPlace
-	rpc("setBuilding", archeryRange)
-	buildingType = "archery"	
-
