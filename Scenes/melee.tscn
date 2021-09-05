@@ -9,8 +9,8 @@
 [ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=7]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 4.71672
-height = 6.04341
+radius = 4.09362
+height = 0.0
 
 [sub_resource type="Animation" id=2]
 resource_name = "Swing"
@@ -22,10 +22,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.4 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 0, -7.5 ), Vector2( 16, -3 ), Vector2( 0, -7.5 ) ]
+"values": [ Vector2( 0, -5 ), Vector2( 0, -8 ), Vector2( 18, -3.5 ), Vector2( 0, -5 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("WeaponSprite:rotation_degrees")
@@ -34,18 +34,16 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.4 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ 0.0, 90.0, 0.0 ]
+"values": [ 0.0, 0.0, 90.0, 0.0 ]
 }
 
 [sub_resource type="CircleShape2D" id=3]
 radius = 100.0
 
 [node name="melee" type="KinematicBody2D"]
-collision_layer = 4
-collision_mask = 5
 script = ExtResource( 2 )
 speed = 30.0
 attackRange = 15
@@ -53,12 +51,12 @@ maxDamage = 2.0
 
 [node name="Sprite" type="Sprite" parent="."]
 use_parent_material = true
+position = Vector2( 0.00334358, -0.0472851 )
 texture = ExtResource( 1 )
-offset = Vector2( 0, -8 )
+offset = Vector2( 0.429754, -7.95271 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-position = Vector2( -0.52556, -6.93739 )
+position = Vector2( -0.735785, -0.840897 )
 shape = SubResource( 1 )
 
 [node name="StopTimer" type="Timer" parent="."]
@@ -83,12 +81,12 @@ __meta__ = {
 }
 
 [node name="Weapon" type="Node2D" parent="."]
-position = Vector2( 1.12448, -7.85598 )
+position = Vector2( 0, -10 )
 script = ExtResource( 4 )
 
 [node name="WeaponSprite" type="Sprite" parent="Weapon"]
-position = Vector2( 0, -7.5 )
-scale = Vector2( 0.743789, 0.697803 )
+position = Vector2( 0, -5 )
+scale = Vector2( 0.923716, 0.697803 )
 texture = ExtResource( 3 )
 centered = false
 
@@ -106,44 +104,7 @@ shape = SubResource( 3 )
 [node name="Front" type="RayCast2D" parent="AvoidRayCast"]
 rotation = -1.5708
 enabled = true
-cast_to = Vector2( 0, 5 )
-collision_mask = 4
-
-[node name="Down" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -0.174533
-enabled = true
-cast_to = Vector2( 0, 5 )
-collision_mask = 4
-
-[node name="FDown" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -0.959931
-enabled = true
-cast_to = Vector2( 0, 5 )
-collision_mask = 4
-
-[node name="Up" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -2.803
-enabled = true
-cast_to = Vector2( 0, 5 )
-collision_mask = 4
-
-[node name="FUp" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -2.18166
-enabled = true
-cast_to = Vector2( 0, 5 )
-collision_mask = 4
-
-[node name="UpBack" type="RayCast2D" parent="AvoidRayCast"]
-rotation = 0.523599
-enabled = true
-cast_to = Vector2( 0, 5 )
-collision_mask = 4
-
-[node name="DownBack" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -3.49066
-enabled = true
-cast_to = Vector2( 0, 5 )
-collision_mask = 4
+cast_to = Vector2( 0, 30 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

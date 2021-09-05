@@ -24,9 +24,8 @@ func setPathfinding(_pathfinding: Pathfinding):
 	
 func _physics_process(_delta):
 	#reset velocity
-
 	velocity = Vector2.ZERO
-	if is_network_master():
+	if get_tree().has_network_peer() && is_network_master():
 		if position.distance_to(dest) > 1.5:
 			velocity = position.direction_to(dest) * speed
 		var path = []
@@ -39,6 +38,16 @@ func _physics_process(_delta):
 		rset_unreliable("slavePosition", position)
 	else:
 		position = slavePosition
+		
+#	if position.distance_to(dest) > 1.5:
+#		velocity = position.direction_to(dest) * speed
+#	var path = []
+#	if pathfinding:
+#		path = pathfinding.getPath(global_position, dest)
+#
+#	if path.size() > 1:
+#		if position.distance_to(path[0]) > 1.5:
+#			velocity = position.direction_to(path[0]) * speed
 
 	velocity = move_and_slide(velocity)
 	updateSprite()

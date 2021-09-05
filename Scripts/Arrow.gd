@@ -2,7 +2,6 @@ extends Area2D
 
 export var speed = 300
 export var steer_force = 10
-onready var sprite = $ArrowSprite
 var damage = 1
 var unitOwner = "ally"
 
@@ -42,7 +41,9 @@ func _on_Arrow_body_entered(_body: Node2D):
 		return
 	if target != null && target.get_ref() != null:
 		if target.get_ref().has_method("takeDamage") && target.get_ref().unitOwner != unitOwner && target.get_ref().currentHealth >= 0:
-			target.get_ref().rpc("takeDamage", damage)
-			queue_free()
+			if target.get_ref():
+				target.get_ref().rpc("takeDamage", damage)
+#				target.get_ref().takeDamage(damage)
+				queue_free()
 
 

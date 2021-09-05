@@ -12,7 +12,7 @@ func _ready():
 	healthBar.set_max(maxHealth)
 	healthBar.set_value(currentHealth)
 
-remotesync func takeDamage(damage : float) -> void:
+remotesync func takeDamage(damage : float, _unitOwner: String = "s") -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0 :

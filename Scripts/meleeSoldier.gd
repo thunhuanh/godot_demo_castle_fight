@@ -11,23 +11,25 @@ func _physics_process(delta):
 func updateSprite():
 	# correct color
 	if unitOwner == "enemy":
-		weaponSprite.scale.x = -1
+		weapon.scale.x = -1
 		sprite.modulate = Color(255, 0, 0) # red shade
 	
 	if attackTarget and attackTarget.get_ref():
-		weaponSprite.scale.x = sign(attackTarget.get_ref().position.x - position.x)
+		weapon.scale.x = sign(attackTarget.get_ref().position.x - position.x)
 	else:
 		if velocity.x != 0:
-			weaponSprite.scale.x = sign(velocity.x)
+			weapon.scale.x = sign(velocity.x)
 
 func _on_StopTimer_timeout():
 	._on_StopTimer_timeout()
 
 func _on_AnimationPlayer_animation_finished(_anim_name):
 	if attackTarget != null && attackTarget.get_ref() != null:
-		if attackTarget.get_ref().has_method("takeDamage") && attackTarget.get_ref().currentHealth >= 0:
-			attackTarget.get_ref().rpc("takeDamage", .calculateDamge())
-
+		if attackTarget.get_ref().has_method("takeDamage") && attackTarget.get_ref().currentHealth > 0:
+			if attackTarget.get_ref():
+				attackTarget.get_ref().rpc("takeDamage", .calculateDamge())
+#				attackTarget.get_ref().takeDamage(.calculateDamge())
+				
 func _on_VisionRange_body_entered(body: Node2D):
 	._on_VisionRange_body_entered(body)
 	

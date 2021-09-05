@@ -8,7 +8,7 @@ extents = Vector2( 55.5025, 0.176954 )
 
 [node name="Arrow" type="Area2D"]
 script = ExtResource( 2 )
-speed = 125
+speed = 175
 steer_force = 1500
 
 [node name="ArrowSprite" type="Sprite" parent="."]

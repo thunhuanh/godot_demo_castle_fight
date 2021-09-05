@@ -9,6 +9,10 @@ export var maxDamage : float  = 3
 export var unitOwner : String = "ally"
 export var baseCritChance : float = 0.075
 export var baseCritMultiplier : float = 1.5
+export var reward = 1
+
+var avoidForce = 60
+
 var currentHealth : float = maxHealth
 
 var selected : bool = false
@@ -32,11 +36,10 @@ var type : String = "melee"
 onready var stopTimer : Timer = $StopTimer
 onready var weapon : Node2D = $Weapon
 onready var sprite : Sprite = $Sprite
-onready var weaponSprite : Sprite = $Weapon/WeaponSprite
 onready var healthBar : TextureProgress = $HealthBar
 onready var avoidRay : Node2D = $AvoidRayCast
 onready var rayFront : RayCast2D = $AvoidRayCast/Front
-onready var game : Node2D = get_node("/root/world/Game")
+onready var game : Node2D = get_node_or_null("/root/Game")
 
 func _ready():
 	dest = global_position
@@ -44,11 +47,10 @@ func _ready():
 	healthBar.max_value = maxHealth
 	currentHealth = maxHealth
 	healthBar.value = currentHealth	
-	
-	if not game.is_connected("updatePathfinding", self,  "setPathfinding"):
-		var err = game.connect("updatePathfinding", self, "setPathfinding")
-		if err :
-			print(err)
+	randomize()
+
+	if game and not game.is_connected("updatePathfinding", self,  "setPathfinding"):
+		var _err = game.connect("updatePathfinding", self, "setPathfinding")
 	# update pathfinding
 
 func setPathfinding(_pathfinding: Pathfinding):
@@ -57,22 +59,27 @@ func setPathfinding(_pathfinding: Pathfinding):
 func updateMovementAndAction(_delta):
 	dest = finalDest
 	isAttacking = false
+	handleAttack()
 	# set attack target
 	if is_network_master():
-		rset_unreliable("slavePosition", position)
+		handleMovement()
+		rset("slavePosition", position)
 	else:
 		position = slavePosition
-	handleAttack()
-	handleMovement()
 
 func handleMovement():
-	if !isAttacking:
-		velocity = Vector2.ZERO
-		moveAlongPath()
-		moveWithAvoidance()
+	velocity = Vector2.ZERO
+	if isAttacking == true:
+		return
+	velocity = position.direction_to(dest) * speed
+	moveAlongPath()
+	moveWithAvoidance()
 
 func handleAttack():
 	# engaging
+	if isAttacking:
+		return
+
 	if cloestEnemy() != null:
 		attackTarget = weakref(cloestEnemy())
 		# move to target
@@ -82,7 +89,9 @@ func handleAttack():
 	if cloestEnemyWithinRange() != null:
 		attackTarget = weakref(cloestEnemyWithinRange())
 		# perform attack
-		weapon.rpc("attack")
+		if weapon:
+			weapon.rpc("attack")
+#		weapon.attack()
 		isAttacking = true
 
 func setDest(_dest : Vector2):
@@ -108,21 +117,28 @@ func handleReachedTarget():
 
 func moveWithAvoidance():
 	avoidRay.rotation = velocity.angle()
-	if obstacleAhead() and rayFront.get_collider().unitOwner == unitOwner:
-		var viableRay = getViableRay()
-		if viableRay != null:
-			velocity = sign(velocity.x) * Vector2.RIGHT.rotated(avoidRay.rotation + viableRay.rotation) * speed
+	var returnValues = obstacleAhead()
+	var ahead : bool = returnValues[0]
+	var collider : Node2D = returnValues[1]
+	var avoidance : Vector2 = Vector2.ZERO
+	var steering : Vector2 = Vector2.ZERO
+	if ahead == true and rayFront.get_collider().unitOwner == unitOwner:
+		avoidance = (position + Vector2(rayFront.cast_to.y, rayFront.cast_to.y) - collider.position).normalized()
+		avoidance = avoidance * avoidForce 
+		steering = velocity + avoidance
 
-	velocity = move_and_slide(velocity)
+	velocity = move_and_slide(truncate(velocity + steering, speed))
 
-func obstacleAhead() -> bool:
-	return rayFront.is_colliding()
+func truncate(vector: Vector2, maxValue):
+	var vectorLegth = vector.length()
+	if vectorLegth == 0:
+		vectorLegth = 1
+	var i = maxValue / vectorLegth
+	i = min(i, 1.0)
+	return vector * i
 
-func getViableRay() -> RayCast2D:
-	for ray in avoidRay.get_children():
-		if !ray.is_colliding() or (ray.get_collider().unitOwner != unitOwner):
-			return ray
-	return null
+func obstacleAhead() -> Array:
+	return [rayFront.is_colliding(), rayFront.get_collider()]
 
 func stop():
 	velocity = Vector2.ZERO
@@ -132,6 +148,7 @@ remotesync func takeDamage(_damage: int) -> void:
 	currentHealth -= _damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0:
+		GlobalVar.rpc("receiveReward", reward, unitOwner)
 		queue_free()
 
 func _on_StopTimer_timeout():
@@ -167,7 +184,7 @@ func cloestEnemyWithinRange() -> Node2D:
 
 func _on_VisionRange_body_entered(body : Node2D):
 	if not (body is Builder):
-		if body.get("unitOwner") != unitOwner && not possibleTarget.has(body):
+		if body.get("unitOwner") && body.get("unitOwner") != unitOwner && not possibleTarget.has(body):
 			possibleTarget.append(body)
 
 func _on_VisionRange_body_exited(body: Node2D):

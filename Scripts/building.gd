@@ -4,9 +4,11 @@ var selected = false
 export var spawnRate = 5
 export var maxHealth : float = 200
 export var buildTime = 10
-export var maxSoldier = 4
+export var maxSoldier = 1
 export var unitOwner = "ally"
 export var type = "melee"
+export var reward = 5
+export var price = 5
 
 var currentHealth : float = 0
 var spawnProgress = 0 
@@ -82,11 +84,12 @@ func updateSprite():
 
 func select():
 	selected = true
-
+	
 remotesync func takeDamage(damage: float) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
-	if currentHealth < 0 :
+	if currentHealth <= 0 :
+		GlobalVar.rpc("receiveReward", reward, unitOwner)
 		queue_free()
 
 func _on_BuildTimer_timeout():
@@ -125,9 +128,9 @@ func _on_SpawnTimer_timeout():
 		# reset progress bar
 		spawnProgress = 0
 	
-	if spawnProgressBar.visible && numOfSoldier >= maxSoldier:
-		spawnProgressBar.visible = false
-
-	if numOfSoldier == maxSoldier:
-		spawnTimer.queue_free()
+#	if spawnProgressBar.visible && numOfSoldier >= maxSoldier:
+#		spawnProgressBar.visible = false
+#
+#	if numOfSoldier == maxSoldier:
+#		spawnTimer.queue_free()
 

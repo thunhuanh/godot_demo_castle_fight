@@ -10,10 +10,11 @@
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 4.5
-height = 6.81616
+height = 0.0
 
 [sub_resource type="Animation" id=2]
 resource_name = "Shoot"
+length = 0.75
 step = 0.05
 tracks/0/type = "value"
 tracks/0/path = NodePath("WeaponSprite:position")
@@ -22,7 +23,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.201388, 0.95, 1 ),
+"times": PoolRealArray( 0, 0.25, 0.7, 0.75 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 0.854742, -5.6047 ), Vector2( 1.96963, -7.85135 ), Vector2( 1.41218, -6.96958 ), Vector2( 1.41218, -6.96958 ) ]
@@ -34,7 +35,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.2, 0.95, 1 ),
+"times": PoolRealArray( 0, 0.25, 0.7, 0.75 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
 "values": [ 0.0, -20.0, -20.0, 0.0 ]
@@ -44,8 +45,6 @@ tracks/1/keys = {
 radius = 90.0
 
 [node name="archer" type="KinematicBody2D"]
-collision_layer = 4
-collision_mask = 5
 script = ExtResource( 1 )
 attackRange = 90
 baseCritChance = 0.05
@@ -56,8 +55,7 @@ texture = ExtResource( 6 )
 offset = Vector2( 0, -8 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
-position = Vector2( -0.520279, -7.50687 )
+position = Vector2( -0.668175, -0.668175 )
 shape = SubResource( 1 )
 
 [node name="StopTimer" type="Timer" parent="."]
@@ -86,7 +84,7 @@ position = Vector2( 0, -8.05075 )
 script = ExtResource( 2 )
 
 [node name="WeaponSprite" type="Sprite" parent="Weapon"]
-position = Vector2( 1.41218, -6.96958 )
+position = Vector2( 0.854742, -5.6047 )
 scale = Vector2( 0.743789, 0.697803 )
 texture = ExtResource( 7 )
 centered = false
@@ -103,49 +101,11 @@ position = Vector2( -0.594604, 3.27032 )
 shape = SubResource( 3 )
 
 [node name="AvoidRayCast" type="Node2D" parent="."]
-visible = false
 
 [node name="Front" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -1.5708
+rotation = -1.57079
 enabled = true
-cast_to = Vector2( 0, 10 )
-collision_mask = 4
-
-[node name="Down" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -0.174533
-enabled = true
-cast_to = Vector2( 0, 10 )
-collision_mask = 4
-
-[node name="FDown" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -0.959931
-enabled = true
-cast_to = Vector2( 0, 10 )
-collision_mask = 4
-
-[node name="Up" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -2.803
-enabled = true
-cast_to = Vector2( 0, 10 )
-collision_mask = 4
-
-[node name="FUp" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -2.18166
-enabled = true
-cast_to = Vector2( 0, 10 )
-collision_mask = 4
-
-[node name="DownBack" type="RayCast2D" parent="AvoidRayCast"]
-rotation = 0.523599
-enabled = true
-cast_to = Vector2( 0, 10 )
-collision_mask = 4
-
-[node name="UpBack" type="RayCast2D" parent="AvoidRayCast"]
-rotation = -3.57792
-enabled = true
-cast_to = Vector2( 0, 10 )
-collision_mask = 4
+cast_to = Vector2( 0, 30 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

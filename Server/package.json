@@ -1,0 +1,12 @@
+{
+  "name": "screenheads-signalling-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "ws": "^7.5.3"
+  },
+  "author": "Kris Slyka",
+  "license": "UNLICENSED",
+  "private": true
+}

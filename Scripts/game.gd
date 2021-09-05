@@ -14,13 +14,11 @@ var isBuilding = false
 
 signal updatePathfinding(pathfinding)
 
-export var barrack = preload("res://Scenes/barrack.tscn")
-export var archeryRange = preload("res://Scenes/archeryRange.tscn")
 
 var building : PackedScene = null
 var buildingType = ""
 var builder : Builder = null
-var uniqueId = 0
+var builderID = 0
 
 onready var uiControl = $UI/Control
 onready var selectRectDraw : Node2D = $selectionRect
@@ -32,6 +30,8 @@ onready var enemyHouse : StaticBody2D = $instanceSort/enemyHouse
 onready var env : TileMap = $enviroment
 onready var pathfinding : Pathfinding = $pathfinding
 
+var builderScene = preload("res://Scenes/player.tscn")
+
 func _ready():
 	# connect signal for multiplayer
 	pathfinding.genMap(env)
@@ -40,34 +40,43 @@ func _ready():
 	invalid_tiles = invalid_tiles + [mainHouseTile, mainHouseTile + Vector2(-1, 1),
 	 mainHouseTile + Vector2(0, 1), enemyHouseTile, enemyHouseTile + Vector2(-1, 0),
 	 enemyHouseTile + Vector2(1, 0)]
+	
+	# connect building button to function
+	for i in get_tree().get_nodes_in_group("building_buttons"):
+		i.connect("pressed", self, "init_building", [i.get_name()])
+	
+#	builder = builderScene.instance()
+#	builder.position = Vector2(512, 256)
+#	$instanceSort.add_child(builder)
 
 func _process(_delta):
 	if builder == null && get_tree().has_network_peer():
-		if is_network_master():
-			uniqueId = 1
-		else:
-			uniqueId = get_tree().get_network_unique_id()
-
-		builder = get_node_or_null("instanceSort/" + str(uniqueId))
+		builder = get_node("instanceSort/" + str(builderID))
+		GlobalVar.unitOwner = builder.unitOwner
 	
 	# checked if player reach building place
 	if buildDestTile != null and reachedBuildingPlace() and isBuilding and builder != null:
 		rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)
+#		buildBuilding(buildDestination, buildingType, builder.unitOwner)
 	
 remotesync func buildBuilding(buidDest: Vector2, _buildingType : String, unitOwner : String = "ally"):
 	var tile = buildingPlacement.world_to_map(buidDest)
 
-	if _buildingType == "barrack":
-		building = barrack
-	else:
-		building = archeryRange
+	building = load("res://Scenes/" + _buildingType + ".tscn")
 
 	var newBuilding = building.instance()
 	newBuilding.unitOwner = unitOwner
 	newBuilding.position = tile * Vector2(32, 32)
-		
+	
+	if GlobalVar.gold < newBuilding.price && unitOwner == builder.unitOwner:
+		isBuilding = false
+		resetBuildPlacement()
+		return
+	
 	if not tile in invalid_tiles :
 		buildings.add_child(newBuilding)
+		if unitOwner == builder.unitOwner:
+			GlobalVar.gold -= newBuilding.price
 		# remove from pathfinding
 		invalid_tiles.append(tile)
 		pathfinding.disablePoint(tile)
@@ -78,8 +87,9 @@ remotesync func buildBuilding(buidDest: Vector2, _buildingType : String, unitOwn
 			builder.setPathfinding(pathfinding)
 			builder.stop()
 
-		isBuilding = false
-		resetBuildPlacement()
+		if unitOwner == builder.unitOwner:
+			isBuilding = false
+			resetBuildPlacement()
 	
 func reachedBuildingPlace():
 	var destinationPos = buildingPlacement.map_to_world(buildDestTile, false)
@@ -126,7 +136,7 @@ func _unhandled_input(event):
 func deselectUnit():
 	if selectedBuilder != null:
 		selectedBuilder.deselect()
-		uiControl.visible = false
+#		uiControl.visible = false
 	selectedBuilder = null
 	dragging = true
 	dragStart = get_global_mouse_position()
@@ -170,7 +180,8 @@ remotesync func placeBuilding(_buildDest: Vector2):
 
 	#prepare tile for placing building
 	if is_close_to_player:
-		rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)		
+		rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)
+#		buildBuilding(buildDestination, buildingType, builder.unitOwner)
 	else:
 		isBuilding = true
 		builder.move_to(buildDestination)
@@ -181,22 +192,9 @@ func resetBuildPlacement():
 	buildingPlacement.clear()
 	canPlace = false
 
-remotesync func setBuilding(_building: PackedScene):
-	building = _building
-
-func _on_archeryRange_pressed():
+func init_building(building_type):
+	buildingType = building_type
 	if isBuilding:
 		return
 	buildingPlacement.clear()
 	canPlace = !canPlace
-	rpc("setBuilding", archeryRange)
-	buildingType = "archery"
-
-func _on_barrack_pressed():
-	if isBuilding:
-		return
-	buildingPlacement.clear()
-	canPlace = false
-	canPlace = !canPlace
-	rpc("setBuilding", barrack)
-	buildingType = "barrack"
