@@ -2,16 +2,17 @@
 
 [ext_resource path="res://Scripts/Main.gd" type="Script" id=2]
 
-[node name="Node2D" type="Node2D"]
+[node name="Main" type="Node2D"]
 script = ExtResource( 2 )
 
 [node name="WaitingLabel" type="Label" parent="."]
+pause_mode = 2
 visible = false
 margin_left = 256.0
-margin_top = 128.0
+margin_top = 176.0
 margin_right = 384.0
-margin_bottom = 150.0
-text = "Waiting for player..."
+margin_bottom = 198.0
+text = "Waiting for server..."
 align = 1
 valign = 1
 __meta__ = {
@@ -19,6 +20,7 @@ __meta__ = {
 }
 
 [node name="Menu" type="HBoxContainer" parent="."]
+pause_mode = 2
 margin_left = 278.039
 margin_top = 161.258
 margin_right = 366.039
@@ -58,11 +60,14 @@ size_flags_vertical = 3
 text = "Join"
 
 [node name="GameCode" type="Label" parent="."]
+pause_mode = 2
 visible = false
 margin_right = 101.0
 margin_bottom = 14.0
 size_flags_vertical = 1
 text = "Game Code: %s"
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }

@@ -11,7 +11,7 @@ export var baseCritChance : float = 0.075
 export var baseCritMultiplier : float = 1.5
 export var reward = 1
 
-var avoidForce = 60
+var avoidForce = 20
 
 var currentHealth : float = maxHealth
 
@@ -40,6 +40,8 @@ onready var healthBar : TextureProgress = $HealthBar
 onready var avoidRay : Node2D = $AvoidRayCast
 onready var rayFront : RayCast2D = $AvoidRayCast/Front
 onready var game : Node2D = get_node_or_null("/root/Game")
+onready var floatingCoin = preload("res://Scenes/FloatingCoin.tscn")
+onready var animationPlayer = $AnimationPlayer
 
 func _ready():
 	dest = global_position
@@ -104,11 +106,12 @@ func moveTo(tar):
 	moveWithAvoidance()
 
 func moveAlongPath():
-	var path = pathfinding.getPath(global_position, dest)
-	if path.size() > 0:
-		if global_position.distance_to(path[0]) > targetMax:
-			velocity = position.direction_to(path[0]) * speed
-			handleReachedTarget()
+	if pathfinding:
+		var path = pathfinding.getPath(global_position, dest)
+		if path.size() > 0:
+			if global_position.distance_to(path[0]) > targetMax:
+				velocity = position.direction_to(path[0]) * speed
+				handleReachedTarget()
 
 func handleReachedTarget():
 	if get_slide_count() and stopTimer.is_stopped():
@@ -148,7 +151,30 @@ remotesync func takeDamage(_damage: int) -> void:
 	currentHealth -= _damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0:
+		# stop the soldier from moving further
+		$CollisionShape2D.disabled = true
+		dest = global_position
+		finalDest = global_position
+		weapon.hide()
+		healthBar.hide()
+		
+		# play death animation
+		animationPlayer.play("Die")
+		
 		GlobalVar.rpc("receiveReward", reward, unitOwner)
+		
+		# show coin receive
+		var floatingCoinReceive = floatingCoin.instance()
+		floatingCoinReceive.amount = reward
+		add_child(floatingCoinReceive)
+		# add timer wait 0.3 second before remove from scene tree
+		var t = Timer.new()
+		t.set_wait_time(0.5)
+		t.set_one_shot(true)
+		add_child(t)
+		t.start()
+		yield(t, "timeout")
+		# remove from scene trê
 		queue_free()
 
 func _on_StopTimer_timeout():

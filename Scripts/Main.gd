@@ -3,9 +3,8 @@ extends Node2D
 var OtherPlayer = preload("res://Scenes/player.tscn")
 var Player = preload("res://Scenes/player.tscn")
 var GameScene = preload("res://Scenes/Game.tscn")
+var curGame = null
 
-#var signal_server_url = "localhost:9080"
-var signal_server_url = "wss://godot-signal-server.herokuapp.com"
 
 var player
 var other_player
@@ -19,21 +18,27 @@ func _ready():
 	OnlineGame.connect("game_info", self, "_on_game_info")
 
 func _on_game_connected(other_playerId):
-	var game = GameScene.instance()
+	if curGame:
+		cleaningGameInstance()
+
+	curGame = GameScene.instance()
 
 	player = Player.instance()
 	var playerID = get_tree().get_network_unique_id()
 	player.set_network_master(playerID)
 	player.set_name(str(playerID))
-	player.set_position(Vector2(512, 256))
+	player.set_position(Vector2(256, 256))
 	if MultiplayerClient.hosting :
 		player.playerName = "BLUE"
-		game.builderID = 1
+		curGame.builderID = 1
+		curGame.get_node("camera2D").position = Vector2(256 - get_viewport().size.x / 2, 256 - get_viewport().size.y / 2)
 	else:
 		player.unitOwner = "enemy"
 		player.playerName = "RED"
-		game.builderID = 2
-	game.get_node("instanceSort").add_child(player)
+		player.set_position(Vector2(777, 256))
+		curGame.get_node("camera2D").position = Vector2(777 - get_viewport().size.x / 2, 256 - get_viewport().size.y / 2)
+		curGame.builderID = 2
+	curGame.get_node("instanceSort").add_child(player)
 
 	other_player = OtherPlayer.instance()
 	other_player.set_name(str(other_playerId))
@@ -45,21 +50,25 @@ func _on_game_connected(other_playerId):
 	else:
 		other_player.unitOwner = "ally"
 		other_player.playerName = "BLUE"
-		
-	game.get_node("instanceSort").add_child(other_player)
+	curGame.get_node("instanceSort").add_child(other_player)
+	add_child(curGame)
 	
-	add_child(game)
-	
-	$Menu.queue_free()
-	$GameCode.queue_free()
-	$WaitingLabel.queue_free()
+	$Menu.hide()
+	$GameCode.hide()
+	$WaitingLabel.hide()
 
 func _on_game_disconnected():
-	player.queue_free()
-	other_player.queue_free()
+	cleaningGameInstance()
 
 	$GameCode.hide()
 	$Menu.show()
+
+func cleaningGameInstance():
+	if player && other_player:
+		player.queue_free()
+		other_player.queue_free()
+	remove_child(curGame)
+	get_tree().paused = false
 
 func _on_game_info(game):
 	$GameCode.text = "Game Code: %s" % game
@@ -68,13 +77,19 @@ func _on_game_info(game):
 	$GameCode.show()
 
 func _on_HostButton_pressed():
-	OnlineGame.host(signal_server_url)
-	$WaitingLabel.text = 'Waiting for server response...'
+	if curGame:
+		cleaningGameInstance()
+	OnlineGame.host(GlobalVar.signal_server_url)
+	$WaitingLabel.text = 'Waiting for server...'
 	$WaitingLabel.show()
 	$Menu.hide()
 
 func _on_JoinButton_pressed():
-	OnlineGame.join(signal_server_url, $Menu/VBoxContainer/GameCode.text)
-	$WaitingLabel.text = 'Joining ' + $Menu/VBoxContainer/GameCode.text
+	if curGame:
+		cleaningGameInstance()
+	if $Menu/VBoxContainer/GameCode.text == "":
+		return
+	OnlineGame.join(GlobalVar.signal_server_url, $Menu/VBoxContainer/GameCode.text)
+	$WaitingLabel.text = 'Joining room ' + $Menu/VBoxContainer/GameCode.text
 	$WaitingLabel.show()
 	$Menu.hide()

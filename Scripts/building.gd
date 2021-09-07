@@ -6,9 +6,10 @@ export var maxHealth : float = 200
 export var buildTime = 10
 export var maxSoldier = 1
 export var unitOwner = "ally"
-export var type = "melee"
+export var type = "barrack"
 export var reward = 5
 export var price = 5
+export var soldier : PackedScene = null
 
 var currentHealth : float = 0
 var spawnProgress = 0 
@@ -23,14 +24,17 @@ onready var spawnProgressBar : TextureProgress = $SpawnProgress
 onready var buildProgress : ProgressBar = $BuildProgress
 onready var healthBar : ProgressBar = $HealthBar
 onready var sprite : Sprite = $Sprite
-onready var meleeSoldier = preload("res://Scenes/melee.tscn")
-onready var rangeSoldier = preload("res://Scenes/archer.tscn")
 
+onready var buildFoundationTexture = preload("res://Assets/build_foundation.png")
+var completeBuildingTexture 
 var buildProgressRef = null
 
-var soldier : PackedScene = null
 
 func _ready():
+	# set starting texture (building foundation)
+	sprite.set_texture(buildFoundationTexture)
+	completeBuildingTexture = load("res://Assets/" + type + ".png")
+	
 	# correcting sprite position
 	position = position + Vector2(16, 16)
 	
@@ -40,9 +44,6 @@ func _ready():
 	else :
 		enemyMainHouseDest = Vector2(840, 260)
 	
-	soldier = meleeSoldier
-	if type != "melee":
-		soldier = rangeSoldier
 	# build process
 	buildTimer.set_wait_time(buildTime)
 	buildTimer.one_shot = true
@@ -79,8 +80,8 @@ func _process(delta):
 
 func updateSprite():
 	# correct color
-	if unitOwner == "enemy":
-		sprite.modulate = Color(255, 0, 0)
+	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+		sprite.material.set_shader_param("isEnemy", true)
 
 func select():
 	selected = true
@@ -93,6 +94,9 @@ remotesync func takeDamage(damage: float) -> void:
 		queue_free()
 
 func _on_BuildTimer_timeout():
+	# set texture
+	sprite.set_texture(completeBuildingTexture)
+	
 	# start spawn soldier
 	spawnTimer.start()
 	spawnProgressBar.visible = true

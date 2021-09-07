@@ -25,8 +25,8 @@ onready var selectRectDraw : Node2D = $selectionRect
 onready var pointer : Node2D = $pointer
 onready var buildingPlacement : TileMap = $building_placement
 onready var buildings  : YSort = $instanceSort/buildings
-onready var mainHouse : StaticBody2D = $instanceSort/mainHouse
-onready var enemyHouse : StaticBody2D = $instanceSort/enemyHouse
+onready var mainHouse : StaticBody2D = $instanceSort/mainHouse1
+onready var enemyHouse : StaticBody2D = $instanceSort/mainHouse2
 onready var env : TileMap = $enviroment
 onready var pathfinding : Pathfinding = $pathfinding
 
@@ -185,9 +185,10 @@ remotesync func placeBuilding(_buildDest: Vector2):
 	else:
 		isBuilding = true
 		builder.move_to(buildDestination)
-		
-	buildingPlacement.clear()
 	
+	resetBuildPlacement()
+	buildingPlacement.clear()
+
 func resetBuildPlacement():
 	buildingPlacement.clear()
 	canPlace = false

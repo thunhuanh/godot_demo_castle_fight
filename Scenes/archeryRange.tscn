@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Scripts/ProgressBar.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/building.gd" type="Script" id=2]
@@ -6,6 +6,30 @@
 [ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=4]
 [ext_resource path="res://Assets/progress-bar-over.png" type="Texture" id=5]
 [ext_resource path="res://Assets/archeryRange.png" type="Texture" id=6]
+[ext_resource path="res://Scenes/archer.tscn" type="PackedScene" id=7]
+
+[sub_resource type="Shader" id=6]
+code = "shader_type canvas_item;
+
+uniform vec4 origin:hint_color;
+uniform vec4 new:hint_color;
+uniform bool isEnemy;
+
+void fragment() {
+    vec4 current_pixel = texture(TEXTURE, UV);
+
+ 	if(isEnemy == true && distance(current_pixel, origin) < 0.01)
+        COLOR = new;
+	else
+		COLOR = current_pixel;
+}"
+
+[sub_resource type="ShaderMaterial" id=7]
+resource_local_to_scene = true
+shader = SubResource( 6 )
+shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
+shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
+shader_param/isEnemy = null
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 12.6374
@@ -33,10 +57,12 @@ scale = Vector2( 1.00335, 1 )
 script = ExtResource( 2 )
 buildTime = 5
 maxSoldier = 5
-type = "range"
+type = "archeryRange"
 price = 7
+soldier = ExtResource( 7 )
 
 [node name="Sprite" type="Sprite" parent="."]
+material = SubResource( 7 )
 texture = ExtResource( 6 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

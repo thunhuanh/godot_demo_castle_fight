@@ -11,9 +11,11 @@ func _physics_process(_delta):
 	updateSprite()
 
 func updateSprite():
+	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+		sprite.material.set_shader_param("isEnemy", true)
+
 	if unitOwner == "enemy":
 		weapon.scale.x = -1
-		sprite.modulate = Color(255, 0, 0) # red shade
 	
 	if attackTarget and attackTarget.get_ref():
 		weapon.scale.x = sign(attackTarget.get_ref().position.x - position.x)

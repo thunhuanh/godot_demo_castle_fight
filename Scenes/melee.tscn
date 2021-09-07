@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Assets/soldier1.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/meleeSoldier.gd" type="Script" id=2]
@@ -8,12 +8,34 @@
 [ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=6]
 [ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=7]
 
-[sub_resource type="CapsuleShape2D" id=1]
-radius = 4.09362
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+uniform vec4 origin:hint_color;
+uniform vec4 new:hint_color;
+uniform bool isEnemy;
+
+void fragment() {
+    vec4 current_pixel = texture(TEXTURE, UV);
+
+ 	if(isEnemy == true && distance(current_pixel, origin) < 0.01)
+        COLOR = new;
+	else
+		COLOR = current_pixel;
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
+shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
+shader_param/isEnemy = false
+
+[sub_resource type="CapsuleShape2D" id=3]
+radius = 4.0
 height = 0.0
 
-[sub_resource type="Animation" id=2]
-resource_name = "Swing"
+[sub_resource type="Animation" id=4]
 length = 0.4
 tracks/0/type = "value"
 tracks/0/path = NodePath("WeaponSprite:position")
@@ -40,8 +62,22 @@ tracks/1/keys = {
 "values": [ 0.0, 0.0, 90.0, 0.0 ]
 }
 
-[sub_resource type="CircleShape2D" id=3]
+[sub_resource type="CircleShape2D" id=5]
 radius = 100.0
+
+[sub_resource type="Animation" id=6]
+resource_name = "Die"
+length = 0.5
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("Sprite:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 24.5049, -0.25, 0, 0.25, 0, 44.4, -0.25, 0, 0.25, 0, 48.7397, -0.25, 0, 0.25, 0, 54.7073, -0.25, 0, 0.25, 0, 90.2, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 )
+}
 
 [node name="melee" type="KinematicBody2D"]
 script = ExtResource( 2 )
@@ -50,14 +86,14 @@ attackRange = 15
 maxDamage = 2.0
 
 [node name="Sprite" type="Sprite" parent="."]
-use_parent_material = true
+material = SubResource( 2 )
 position = Vector2( 0.00334358, -0.0472851 )
 texture = ExtResource( 1 )
 offset = Vector2( 0.429754, -7.95271 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( -0.735785, -0.840897 )
-shape = SubResource( 1 )
+position = Vector2( -0.123293, -0.172724 )
+shape = SubResource( 3 )
 
 [node name="StopTimer" type="Timer" parent="."]
 one_shot = true
@@ -91,20 +127,24 @@ texture = ExtResource( 3 )
 centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
-anims/Swing = SubResource( 2 )
+anims/Swing = SubResource( 4 )
 
 [node name="VisionRange" type="Area2D" parent="."]
 visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
-shape = SubResource( 3 )
+shape = SubResource( 5 )
 
 [node name="AvoidRayCast" type="Node2D" parent="."]
 
 [node name="Front" type="RayCast2D" parent="AvoidRayCast"]
+position = Vector2( 0, -0.111362 )
 rotation = -1.5708
 enabled = true
-cast_to = Vector2( 0, 30 )
+cast_to = Vector2( 0, 5 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Die = SubResource( 6 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

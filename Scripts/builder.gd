@@ -9,6 +9,7 @@ var playerID = ""
 var playerName = ""
 export var unitOwner = "ally"
 
+onready var sprite : Sprite = $Sprite
 onready var nameTag : Label = $Label
 
 remote var slavePosition = Vector2.ZERO
@@ -55,9 +56,9 @@ func _physics_process(_delta):
 func updateSprite():
 	if nameTag.text == "":
 		nameTag.text = playerName
-	
-	if unitOwner == "enemy":
-		$Sprite.modulate = Color(255, 0, 0) # blue shade
+
+	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+		sprite.material.set_shader_param("isEnemy", true)
 
 func move_to(tar):
 	dest = tar
