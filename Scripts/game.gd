@@ -20,7 +20,6 @@ var buildingType = ""
 var builder : Builder = null
 var builderID = 0
 
-onready var uiControl = $UI/Control
 onready var selectRectDraw : Node2D = $selectionRect
 onready var pointer : Node2D = $pointer
 onready var buildingPlacement : TileMap = $building_placement
@@ -29,10 +28,19 @@ onready var mainHouse : StaticBody2D = $instanceSort/mainHouse1
 onready var enemyHouse : StaticBody2D = $instanceSort/mainHouse2
 onready var env : TileMap = $enviroment
 onready var pathfinding : Pathfinding = $pathfinding
+onready var joystick = $UserInterface/UI/JoystickLeft
+onready var grid = $Grid
 
 var builderScene = preload("res://Scenes/player.tscn")
 
 func _ready():
+	# check os
+	if OS.get_name().to_lower() == 'ios' or OS.get_name().to_lower() == 'android':
+		remove_child($camera)
+	else:
+		joystick.queue_free()
+		remove_child($TouchScreenCamera)
+	
 	# connect signal for multiplayer
 	pathfinding.genMap(env)
 	var mainHouseTile = env.world_to_map(mainHouse.position)
@@ -50,6 +58,8 @@ func _ready():
 #	$instanceSort.add_child(builder)
 
 func _process(_delta):
+	grid.on = canPlace
+	
 	if builder == null && get_tree().has_network_peer():
 		builder = get_node("instanceSort/" + str(builderID))
 		GlobalVar.unitOwner = builder.unitOwner
@@ -130,7 +140,7 @@ func _unhandled_input(event):
 				buildingPlacement.set_cell(tile.x, tile.y, 0)
 			else:
 				buildingPlacement.set_cell(tile.x, tile.y, 1)
-		if dragging:
+		if dragging and not (OS.get_name().to_lower() == 'ios' or OS.get_name().to_lower() == 'android'):
 			selectRectDraw.update_status(dragStart, mousePos, dragging)
 
 func deselectUnit():
@@ -164,9 +174,6 @@ func selectUnit():
 		if builder && shape.collider.name == builder.name:
 			selectedBuilder = shape.collider
 			selectedBuilder.select()
-			
-			#hide/unhide ui control
-			uiControl.visible = true
 
 remotesync func placeBuilding(_buildDest: Vector2):
 	buildDestination = _buildDest
@@ -199,3 +206,13 @@ func init_building(building_type):
 		return
 	buildingPlacement.clear()
 	canPlace = !canPlace
+
+
+func _on_Button_pressed():
+	pass # Replace with function body.
+
+
+func _on_LobbyButton_pressed():
+	get_tree().change_scene("res://Root.tscn")
+	Gotm.lobby.leave()
+	self.queue_free()

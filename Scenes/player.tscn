@@ -41,6 +41,7 @@ font_data = SubResource( 4 )
 [node name="player" type="KinematicBody2D"]
 collision_layer = 2
 script = ExtResource( 3 )
+unitOwner = null
 speed = 100.0
 
 [node name="Sprite" type="Sprite" parent="."]

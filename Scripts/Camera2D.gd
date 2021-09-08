@@ -13,6 +13,6 @@ func _process(delta):
 	var inputY = (int(Input.is_action_pressed("ui_down")) 
 		- int(Input.is_action_pressed("ui_up")))
 	
-	position.x = lerp(position.x, position.x + inputX * Speed, Speed * delta)
-	position.y = lerp(position.y, position.y + inputY * Speed, Speed * delta)
+	position.x = lerp(position.x, position.x + inputX * Speed * zoom.x * 2, Speed * delta * zoom.x * 2)
+	position.y = lerp(position.y, position.y + inputY * Speed * zoom.y * 2, Speed * delta * zoom.y * 2)
 	pass

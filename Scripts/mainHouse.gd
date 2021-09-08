@@ -5,7 +5,8 @@ export var maxHealth = 500
 export var unitOwner = "ally"
 var currentHealth = maxHealth
 var collisionRadius = 20
-onready var gameNode = get_node("/root/Main/Game")
+export var popupNodePath : NodePath = ""
+onready var popup = get_node(popupNodePath)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -24,8 +25,9 @@ remote func takeDamage(damage : float, _unitOwner: String = "s") -> void:
 		rpc("pauseGame")
 		
 remote func setGameStatusText(_text: String):
-	gameNode.get_node_or_null("UI/Control/Popup/VBoxContainer/VBoxContainer/StatusText").text = _text
-	gameNode.get_node_or_null("UI/Control/Popup").popup_centered()
+	if popup:
+		popup.get_node("VBoxContainer/VBoxContainer/StatusText").set_text(_text)
+		popup.popup_centered()
 
 remotesync func pauseGame():
 	get_tree().paused = true

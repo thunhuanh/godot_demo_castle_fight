@@ -8,6 +8,8 @@ var pathfinding : Pathfinding
 var playerID = ""
 var playerName = ""
 export var unitOwner = "ally"
+export var controlNodePath : NodePath
+onready var controlNode : Joystick = get_node(controlNodePath)
 
 onready var sprite : Sprite = $Sprite
 onready var nameTag : Label = $Label
@@ -24,19 +26,26 @@ func setPathfinding(_pathfinding: Pathfinding):
 	set_physics_process(true)
 	
 func _physics_process(_delta):
+	updateSprite()
+	
 	#reset velocity
 	velocity = Vector2.ZERO
+		
 	if get_tree().has_network_peer() && is_network_master():
-		if position.distance_to(dest) > 1.5:
-			velocity = position.direction_to(dest) * speed
-		var path = []
-		if pathfinding:
-			path = pathfinding.getPath(global_position, dest)
+		if controlNode and controlNode.is_working:
+			velocity = move_and_slide(controlNode.output * speed)
+			rset_unreliable("slavePosition", position)			
+		else:
+			if position.distance_to(dest) > 1.5:
+				velocity = position.direction_to(dest) * speed
+			var path = []
+			if pathfinding:
+				path = pathfinding.getPath(global_position, dest)
 
-		if path.size() > 1:
-			if position.distance_to(path[0]) > 1.5:
-				velocity = position.direction_to(path[0]) * speed
-		rset_unreliable("slavePosition", position)
+			if path.size() > 1:
+				if position.distance_to(path[0]) > 1.5:
+					velocity = position.direction_to(path[0]) * speed
+			rset_unreliable("slavePosition", position)
 	else:
 		position = slavePosition
 		
@@ -49,9 +58,8 @@ func _physics_process(_delta):
 #	if path.size() > 1:
 #		if position.distance_to(path[0]) > 1.5:
 #			velocity = position.direction_to(path[0]) * speed
-
-	velocity = move_and_slide(velocity)
-	updateSprite()
+	if !controlNode:
+		velocity = move_and_slide(velocity)
 	
 func updateSprite():
 	if nameTag.text == "":

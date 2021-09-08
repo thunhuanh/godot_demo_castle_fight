@@ -42,7 +42,6 @@ func stop():
 	rtc_mp.close()
 	ws_client.disconnect_from_host()
 
-
 func _ws_connected(_protocol : String = ""):
 	ws_client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 
@@ -85,6 +84,8 @@ func _ws_parse_msg():
 	elif cmd == "OFFER":
 # warning-ignore:return_value_discarded
 		peer.set_remote_description("offer", data)
+		print("ofer ///")
+		
 
 	elif cmd == "ANSWER":
 # warning-ignore:return_value_discarded
@@ -105,13 +106,29 @@ func _process(_delta : float):
 	if status == WebSocketClient.CONNECTION_CONNECTING or status == WebSocketClient.CONNECTION_CONNECTED:
 		ws_client.poll()
 
-
 func _connect_peer():
 	self.peer = WebRTCPeerConnection.new()
 	var peer_id := 2 if hosting else 1
 # warning-ignore:return_value_discarded
 	peer.initialize({
-		"iceServers": [ { "urls": ["stun:stun.l.google.com:19302"] } ]
+		"iceServers": [ 
+			{ "urls": ["stun:stun.l.google.com:19302"] },
+#			{
+#				"url": 'turn:numb.viagenie.ca',
+#				"credential": 'muazkh',
+#				"username": 'webrtc@live.com'
+#			},
+#			{
+#				"url": 'turn:192.158.29.39:3478?transport=udp',
+#				"credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+#				"username": '28224511:1379330808'
+#			},
+#			{
+#				"url": 'turn:192.158.29.39:3478?transport=tcp',
+#				"credential": 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+#				"username": '28224511:1379330808'
+#			}
+		 ]
 	})
 # warning-ignore:return_value_discarded
 	peer.connect("session_description_created", self, "_offer_created")

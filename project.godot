@@ -14,10 +14,60 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scripts/builder.gd"
 }, {
+"base": "Reference",
+"class": "GotmDebug",
+"language": "GDScript",
+"path": "res://gotm/GotmDebug.gd"
+}, {
+"base": "Reference",
+"class": "GotmFile",
+"language": "GDScript",
+"path": "res://gotm/GotmFile.gd"
+}, {
+"base": "Reference",
+"class": "GotmLobby",
+"language": "GDScript",
+"path": "res://gotm/GotmLobby.gd"
+}, {
+"base": "Reference",
+"class": "GotmLobbyFetch",
+"language": "GDScript",
+"path": "res://gotm/GotmLobbyFetch.gd"
+}, {
+"base": "Reference",
+"class": "GotmUser",
+"language": "GDScript",
+"path": "res://gotm/GotmUser.gd"
+}, {
+"base": "Control",
+"class": "Joystick",
+"language": "GDScript",
+"path": "res://Joystick/Joystick.gd"
+}, {
 "base": "Node",
 "class": "Pathfinding",
 "language": "GDScript",
 "path": "res://Scripts/pathfinding.gd"
+}, {
+"base": "Position2D",
+"class": "PinchPanCamera",
+"language": "GDScript",
+"path": "res://addons/ppc/ppcamera.gd"
+}, {
+"base": "Reference",
+"class": "_GotmDebugImpl",
+"language": "GDScript",
+"path": "res://gotm/_impl/_GotmDebugImpl.gd"
+}, {
+"base": "Reference",
+"class": "_GotmImpl",
+"language": "GDScript",
+"path": "res://gotm/_impl/_GotmImpl.gd"
+}, {
+"base": "Reference",
+"class": "_GotmImplUtility",
+"language": "GDScript",
+"path": "res://gotm/_impl/_GotmImplUtility.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "soldier",
@@ -26,21 +76,31 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Builder": "",
+"GotmDebug": "",
+"GotmFile": "",
+"GotmLobby": "",
+"GotmLobbyFetch": "",
+"GotmUser": "",
+"Joystick": "",
 "Pathfinding": "",
+"PinchPanCamera": "res://addons/ppc/icon.png",
+"_GotmDebugImpl": "",
+"_GotmImpl": "",
+"_GotmImplUtility": "",
 "soldier": ""
 }
 
 [application]
 
-config/name="SimpleWebRTC"
-run/main_scene="res://Main.tscn"
-config/icon="res://icon.png"
+config/name="Little war ground"
+run/main_scene="res://Root.tscn"
+config/icon="res://Assets/mainHouse1.png"
+config/windows_native_icon="res://Assets/mainHouse1.ico"
 
 [autoload]
 
 GlobalVar="*res://Scripts/Global/GlobalVar.gd"
-OnlineGame="*res://Scripts/Global/Game.gd"
-MultiplayerClient="*res://Scripts/Global/MultiplayerClient.gd"
+Gotm="*res://gotm/Gotm.gd"
 
 [debug]
 
@@ -52,16 +112,28 @@ multirun/other_window_args="join"
 
 [display]
 
-window/size/width=640
-window/size/height=400
+window/size/width=800
 window/size/test_width=1280
 window/size/test_height=800
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/ppc/plugin.cfg" )
+
 [gdnative]
 
 singletons=[ "res://webrtc/webrtc.tres" ]
+singletons_disabled=[ "res://webrtc/webrtc.tres" ]
+
+[global]
+
+main=false
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [rendering]
 
