@@ -51,7 +51,6 @@ func _on_network_connected(game : String):
 
 	get_tree().network_peer = MultiplayerClient.rtc_mp
 
-
 func _on_connection_failed():
 	print("Connection failed!")
 

@@ -10,6 +10,8 @@ var player
 var other_player
 
 func _ready():
+	if OS.get_name() == "Windows":
+		$Menu/VBoxContainer/GameCode.remove_child($Menu/VBoxContainer/GameCode/TextureButton)
 # warning-ignore:return_value_discarded
 	OnlineGame.connect("game_connected", self, "_on_game_connected")
 # warning-ignore:return_value_discarded
@@ -93,3 +95,9 @@ func _on_JoinButton_pressed():
 	$WaitingLabel.text = 'Joining room ' + $Menu/VBoxContainer/GameCode.text
 	$WaitingLabel.show()
 	$Menu.hide()
+
+func _on_TextureButton_pressed():
+	if OS.has_feature('JavaScript'):
+		$Menu/VBoxContainer/GameCode.text = JavaScript.eval("""
+			window.prompt('GameCode')
+		""")

@@ -109,7 +109,6 @@ func _process(_delta : float):
 func _connect_peer():
 	self.peer = WebRTCPeerConnection.new()
 	var peer_id := 2 if hosting else 1
-
 # warning-ignore:return_value_discarded
 	peer.initialize({
 		"iceServers": [ { "urls": ["stun:stun.l.google.com:19302"] } ]
@@ -138,4 +137,5 @@ func _offer_created(type : String, data : String):
 		_send_msg("ANSWER", data)
 
 func _connection_succeeded():
+	print("connection succeed")
 	ws_client.disconnect_from_host()
