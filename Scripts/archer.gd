@@ -5,23 +5,12 @@ onready var arrow = preload("res://Scenes/Arrow.tscn")
 func _ready():
 	._ready()
 	type = "range"
+#	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+#		sprite.material.set_shader_param("isEnemy", true)
 
 func _physics_process(_delta):
 	.updateMovementAndAction(_delta)
-	updateSprite()
-
-func updateSprite():
-	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
-		sprite.material.set_shader_param("isEnemy", true)
-
-	if unitOwner == "enemy":
-		weapon.scale.x = -1
-	
-	if attackTarget and attackTarget.get_ref():
-		weapon.scale.x = sign(attackTarget.get_ref().position.x - position.x)
-	else:
-		if velocity.x != 0:
-			weapon.scale.x = sign(velocity.x)
+	.updateSprite()
 
 func _on_StopTimer_timeout():
 	._on_StopTimer_timeout()

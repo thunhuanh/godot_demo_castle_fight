@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Scripts/archer.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Bow.gd" type="Script" id=2]
@@ -7,29 +7,8 @@
 [ext_resource path="res://Assets/bounding box.png" type="Texture" id=5]
 [ext_resource path="res://Assets/archer.png" type="Texture" id=6]
 [ext_resource path="res://Assets/bow.png" type="Texture" id=7]
-
-[sub_resource type="Shader" id=1]
-code = "shader_type canvas_item;
-
-uniform vec4 origin:hint_color;
-uniform vec4 new:hint_color;
-uniform bool isEnemy;
-
-void fragment() {
-    vec4 current_pixel = texture(TEXTURE, UV);
-
- 	if(isEnemy == true && distance(current_pixel, origin) < 0.01)
-        COLOR = new;
-	else
-		COLOR = current_pixel;
-}"
-
-[sub_resource type="ShaderMaterial" id=2]
-resource_local_to_scene = true
-shader = SubResource( 1 )
-shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
-shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
-shader_param/isEnemy = false
+[ext_resource path="res://Assets/archer2.png" type="Texture" id=8]
+[ext_resource path="res://Assets/archer1.png" type="Texture" id=9]
 
 [sub_resource type="CapsuleShape2D" id=3]
 radius = 4.5
@@ -66,31 +45,62 @@ tracks/1/keys = {
 [sub_resource type="CircleShape2D" id=5]
 radius = 90.0
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Shader" id=7]
+code = "shader_type canvas_item;
+
+uniform vec4 origin:hint_color;
+uniform vec4 new:hint_color;
+uniform bool isEnemy;
+
+void fragment() {
+    vec4 current_pixel = texture(TEXTURE, UV);
+
+ 	if(isEnemy == true && distance(current_pixel, origin) < 0.01)
+        COLOR = new;
+	else
+		COLOR = current_pixel;
+}"
+
+[sub_resource type="ShaderMaterial" id=8]
+resource_local_to_scene = true
+shader = SubResource( 7 )
+shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
+shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
+shader_param/isEnemy = false
+
+[sub_resource type="SpriteFrames" id=9]
+animations = [ {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ), ExtResource( 8 ) ],
+"loop": true,
+"name": "walk",
+"speed": 5.0
+} ]
+
+[sub_resource type="Animation" id=10]
 resource_name = "Die"
 length = 0.5
-tracks/0/type = "bezier"
+tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:rotation_degrees")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 24.5049, -0.25, 0, 0.25, 0, 44.4, -0.25, 0, 0.25, 0, 48.7397, -0.25, 0, 0.25, 0, 54.7073, -0.25, 0, 0.25, 0, 90.2, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 )
+"times": PoolRealArray( 0, 0.2, 0.3, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 35.0, 49.2, 90.0 ]
 }
 
 [node name="archer" type="KinematicBody2D"]
 script = ExtResource( 1 )
 attackRange = 90
 baseCritChance = 0.05
-
-[node name="Sprite" type="Sprite" parent="."]
-material = SubResource( 2 )
-use_parent_material = true
-position = Vector2( 0.375, 0 )
-texture = ExtResource( 6 )
-offset = Vector2( 0, -8 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( -0.043175, -0.105675 )
@@ -145,8 +155,15 @@ rotation = -1.57079
 enabled = true
 cast_to = Vector2( 0, 7 )
 
+[node name="Sprite" type="AnimatedSprite" parent="."]
+material = SubResource( 8 )
+position = Vector2( -0.0341434, -0.100505 )
+frames = SubResource( 9 )
+animation = "idle"
+offset = Vector2( 0.359143, -7.8995 )
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/Die = SubResource( 6 )
+anims/Die = SubResource( 10 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

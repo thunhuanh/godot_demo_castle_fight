@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Root.gd" type="Script" id=1]
 [ext_resource path="res://components/Card/Card.tscn" type="PackedScene" id=2]
@@ -10,7 +10,6 @@
 [ext_resource path="res://resources/textures/Refresh.svg" type="Texture" id=8]
 [ext_resource path="res://components/LobbyEntry/LobbyEntry.tscn" type="PackedScene" id=9]
 [ext_resource path="res://components/TextInput/TextInput.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Scripts/MobileButton.gd" type="Script" id=11]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 1, 1, 1, 1 )
@@ -121,15 +120,10 @@ anchor_top = 0.5
 anchor_bottom = 0.5
 margin_left = 15.0
 margin_top = -25.0
-margin_right = 429.0
+margin_right = 350.0
 margin_bottom = 25.0
 custom_styles/panel = SubResource( 3 )
 placeholder_text = "Lobby name..."
-
-[node name="TextureButton" type="TextureButton" parent="Lobbies/Host/Name"]
-margin_right = 414.0
-margin_bottom = 50.0
-script = ExtResource( 11 )
 
 [node name="Host" parent="Lobbies/Host" instance=ExtResource( 7 )]
 anchor_left = 1.0
@@ -140,6 +134,16 @@ margin_top = -28.0
 margin_right = -18.0
 margin_bottom = 28.0
 text = "Host"
+
+[node name="RandomName" parent="Lobbies/Host" instance=ExtResource( 7 )]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = -422.0
+margin_top = -28.0
+margin_right = -182.0
+margin_bottom = 28.0
+text = "Random Name"
 
 [node name="Label" type="Label" parent="."]
 visible = false
@@ -165,5 +169,5 @@ margin_bottom = 100.5
 
 [connection signal="selected" from="Lobbies/List/LobbyEntry" to="." method="_on_LobbyEntry_selected"]
 [connection signal="clicked" from="Lobbies/List/Refresh" to="." method="_on_Refresh_clicked"]
-[connection signal="pressed" from="Lobbies/Host/Name/TextureButton" to="Lobbies/Host/Name" method="_on_TextureButton_pressed"]
 [connection signal="clicked" from="Lobbies/Host/Host" to="." method="_on_Host_clicked"]
+[connection signal="clicked" from="Lobbies/Host/RandomName" to="Lobbies/Host/Name" method="_on_RandomName_clicked"]

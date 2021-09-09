@@ -29,7 +29,7 @@ resource_local_to_scene = true
 shader = SubResource( 1 )
 shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
 shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
-shader_param/isEnemy = null
+shader_param/isEnemy = false
 
 [sub_resource type="CapsuleShape2D" id=3]
 radius = 8.62053
@@ -54,6 +54,7 @@ bg_color = Color( 0.109804, 0.101961, 0.101961, 1 )
 
 [node name="archeryRange" type="StaticBody2D"]
 scale = Vector2( 1.00335, 1 )
+collision_mask = 6
 script = ExtResource( 2 )
 buildTime = 5
 maxSoldier = 5

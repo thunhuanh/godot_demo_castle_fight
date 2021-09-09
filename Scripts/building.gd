@@ -66,22 +66,23 @@ func _ready():
 	buildProgress.max_value = maxHealth
 	
 	healthBar.visible = false
-
-	return
+	
+	#correct color
+	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+		sprite.material.set_shader_param("isEnemy", true)
 
 func _process(delta):
 	if !buildProgressRef.get_ref():
 		spawnProgressBar.set_value(spawnProgress)
 
-	updateSprite()
+#	updateSprite()
 	
 	if buildProgressRef.get_ref():
 		buildProgress.value += (maxHealth / buildTime) * delta
 
 func updateSprite():
 	# correct color
-	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
-		sprite.material.set_shader_param("isEnemy", true)
+	pass
 
 func select():
 	selected = true
@@ -121,7 +122,7 @@ func _on_SpawnTimer_timeout():
 		var newSoldier = soldier.instance()
 
 		newSoldier.position = position + Vector2(0, 16)
-		newSoldier.unitOwner = unitOwner
+		newSoldier.setUnitOwner(unitOwner)
 		newSoldier.setPathfinding(get_parent().get_parent().get_parent().pathfinding)
 		
 		get_parent().get_parent().get_child(3).add_child(newSoldier)

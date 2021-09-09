@@ -6,7 +6,7 @@ export var attackRange = 30
 export var maxHealth : float = 10
 export var minDamage : float  = 1
 export var maxDamage : float  = 3
-export var unitOwner : String = "ally"
+export var unitOwner : String = "ally" setget setUnitOwner
 export var baseCritChance : float = 0.075
 export var baseCritMultiplier : float = 1.5
 export var reward = 1
@@ -35,7 +35,7 @@ var type : String = "melee"
 
 onready var stopTimer : Timer = $StopTimer
 onready var weapon : Node2D = $Weapon
-onready var sprite : Sprite = $Sprite
+onready var sprite : AnimatedSprite = $Sprite
 onready var healthBar : TextureProgress = $HealthBar
 onready var avoidRay : Node2D = $AvoidRayCast
 onready var rayFront : RayCast2D = $AvoidRayCast/Front
@@ -43,6 +43,7 @@ onready var game : Node2D = get_node_or_null("/root/Game")
 onready var floatingCoin = preload("res://Scenes/FloatingCoin.tscn")
 onready var animationPlayer = $AnimationPlayer
 
+var prevPos
 func _ready():
 	dest = global_position
 	finalDest = global_position
@@ -53,6 +54,9 @@ func _ready():
 
 	if game and not game.is_connected("updatePathfinding", self,  "setPathfinding"):
 		var _err = game.connect("updatePathfinding", self, "setPathfinding")
+	
+	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+		sprite.material.set_shader_param("isEnemy", true)
 	# update pathfinding
 
 func setPathfinding(_pathfinding: Pathfinding):
@@ -65,9 +69,34 @@ func updateMovementAndAction(_delta):
 	# set attack target
 	if is_network_master():
 		handleMovement()
-		rset("slavePosition", position)
+		rset_unreliable("slavePosition", position)
 	else:
 		position = slavePosition
+
+func isMoving() -> bool:
+	var isMove = global_position != prevPos
+	prevPos = global_position
+	return isMove
+
+func updateSprite():
+	if !isMoving() or isAttacking:
+		sprite.play("idle")
+	else:
+		sprite.play("walk")
+	
+	if unitOwner == "enemy":
+		weapon.scale.x = -1
+	
+	if attackTarget and attackTarget.get_ref():
+		weapon.scale.x = sign(attackTarget.get_ref().position.x - position.x)
+	else:
+		if velocity.x != 0:
+			weapon.scale.x = sign(velocity.x)
+
+func setUnitOwner(newUnitOwner):
+	unitOwner = newUnitOwner
+	if newUnitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+		sprite.material.set_shader_param("isEnemy", true)
 
 func handleMovement():
 	velocity = Vector2.ZERO
@@ -151,11 +180,12 @@ remotesync func takeDamage(_damage: int) -> void:
 	currentHealth -= _damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0:
+		set_physics_process(false)
 		# stop the soldier from moving further
 		$CollisionShape2D.disabled = true
 		dest = global_position
 		finalDest = global_position
-		weapon.hide()
+		weapon.queue_free()
 		healthBar.hide()
 		
 		# play death animation

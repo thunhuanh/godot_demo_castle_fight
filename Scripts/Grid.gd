@@ -6,8 +6,6 @@ var gridSize = 32
 func _draw():
 	if on:
 		var cameraName = "camera"
-		if OS.get_name().to_lower() == 'ios' or OS.get_name().to_lower() == 'android':
-			cameraName = "TouchScreenCamera"
 		var size = get_viewport_rect().size  * get_parent().get_node(cameraName).zoom / 2
 		var cam = get_parent().get_node(cameraName).position
 		for i in range(int((cam.x - size.x) / gridSize) - 1, int((size.x + cam.x) / gridSize) + 1):

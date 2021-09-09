@@ -28,18 +28,24 @@ onready var mainHouse : StaticBody2D = $instanceSort/mainHouse1
 onready var enemyHouse : StaticBody2D = $instanceSort/mainHouse2
 onready var env : TileMap = $enviroment
 onready var pathfinding : Pathfinding = $pathfinding
-onready var joystick = $UserInterface/UI/JoystickLeft
+onready var joystickLeft = $UserInterface/UI/JoystickLeft
+onready var joystickRight = $UserInterface/UI/JoystickRight
 onready var grid = $Grid
 
 var builderScene = preload("res://Scenes/player.tscn")
+var isOnMobile
 
 func _ready():
 	# check os
-	if OS.get_name().to_lower() == 'ios' or OS.get_name().to_lower() == 'android':
-		remove_child($camera)
+	var screenSize = OS.get_screen_size()
+	var isLandscapeMode = screenSize.x > screenSize.y
+	var isPlayingOnMobile = (screenSize.x <= 670 && screenSize.y <= 380) if isLandscapeMode else (screenSize.y <= 670 && screenSize.x <= 380)
+	isOnMobile = isPlayingOnMobile
+	if isPlayingOnMobile:
+		$camera.controlNode = joystickRight
 	else:
-		joystick.queue_free()
-		remove_child($TouchScreenCamera)
+		joystickLeft.queue_free()
+		joystickRight.queue_free()
 	
 	# connect signal for multiplayer
 	pathfinding.genMap(env)
@@ -63,6 +69,11 @@ func _process(_delta):
 	if builder == null && get_tree().has_network_peer():
 		builder = get_node("instanceSort/" + str(builderID))
 		GlobalVar.unitOwner = builder.unitOwner
+		
+		if isOnMobile:
+			builder.controlNodePath = joystickLeft.get_path()
+			builder.setControlNode()
+			builder.isOnMobile = isOnMobile
 	
 	# checked if player reach building place
 	if buildDestTile != null and reachedBuildingPlace() and isBuilding and builder != null:
@@ -96,10 +107,12 @@ remotesync func buildBuilding(buidDest: Vector2, _buildingType : String, unitOwn
 		if builder != null:
 			builder.setPathfinding(pathfinding)
 			builder.stop()
+			builder.set_is_building(false)
 
 		if unitOwner == builder.unitOwner:
 			isBuilding = false
 			resetBuildPlacement()
+	
 	
 func reachedBuildingPlace():
 	var destinationPos = buildingPlacement.map_to_world(buildDestTile, false)
@@ -133,14 +146,14 @@ func _unhandled_input(event):
 		resetBuildPlacement()
 
 	if event is InputEventMouseMotion:
-		if canPlace:
+		if canPlace && not isOnMobile:
 			buildingPlacement.clear()
 			var tile = buildingPlacement.world_to_map(mousePos)
 			if not tile in invalid_tiles:
 				buildingPlacement.set_cell(tile.x, tile.y, 0)
 			else:
 				buildingPlacement.set_cell(tile.x, tile.y, 1)
-		if dragging and not (OS.get_name().to_lower() == 'ios' or OS.get_name().to_lower() == 'android'):
+		if dragging and not isOnMobile:
 			selectRectDraw.update_status(dragStart, mousePos, dragging)
 
 func deselectUnit():
@@ -192,6 +205,7 @@ remotesync func placeBuilding(_buildDest: Vector2):
 	else:
 		isBuilding = true
 		builder.move_to(buildDestination)
+		builder.set_is_building(true)
 	
 	resetBuildPlacement()
 	buildingPlacement.clear()
@@ -206,11 +220,6 @@ func init_building(building_type):
 		return
 	buildingPlacement.clear()
 	canPlace = !canPlace
-
-
-func _on_Button_pressed():
-	pass # Replace with function body.
-
 
 func _on_LobbyButton_pressed():
 	get_tree().change_scene("res://Root.tscn")

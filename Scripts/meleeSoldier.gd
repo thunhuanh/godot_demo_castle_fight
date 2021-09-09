@@ -6,21 +6,7 @@ func _ready():
 	
 func _physics_process(delta):
 	.updateMovementAndAction(delta)
-	updateSprite()
-
-func updateSprite():
-	# correct color
-	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
-		sprite.material.set_shader_param("isEnemy", true)
-		
-	if unitOwner == "enemy":
-		weapon.scale.x = -1
-
-	if attackTarget and attackTarget.get_ref():
-		weapon.scale.x = sign(attackTarget.get_ref().position.x - position.x)
-	else:
-		if velocity.x != 0:
-			weapon.scale.x = sign(velocity.x)
+	.updateSprite()
 
 func _on_StopTimer_timeout():
 	._on_StopTimer_timeout()
