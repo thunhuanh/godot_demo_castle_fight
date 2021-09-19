@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=2]
+[gd_scene load_steps=50 format=2]
 
 [ext_resource path="res://Scripts/game.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/pathfinding.gd" type="Script" id=2]
@@ -33,6 +33,7 @@
 [ext_resource path="res://Scenes/Label.gd" type="Script" id=31]
 [ext_resource path="res://Scripts/Popup.gd" type="Script" id=32]
 [ext_resource path="res://Assets/fonts/RoundedpixelRegular-53P8.ttf" type="DynamicFontData" id=33]
+[ext_resource path="res://Scripts/BuildingShop.gd" type="Script" id=34]
 [ext_resource path="res://Joystick/Joystick.tscn" type="PackedScene" id=35]
 [ext_resource path="res://Scripts/Grid.gd" type="Script" id=36]
 
@@ -82,6 +83,50 @@ animations = [ {
 
 [sub_resource type="StyleBoxFlat" id=5]
 resource_local_to_scene = true
+bg_color = Color( 0.623529, 0.901961, 0.627451, 0.788235 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color( 0.960784, 0.360784, 0.278431, 1 )
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.623529, 0.901961, 0.627451, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 1.0
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.623529, 0.901961, 0.627451, 0.788235 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color( 0.960784, 0.360784, 0.278431, 1 )
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.623529, 0.901961, 0.627451, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=9]
+resource_local_to_scene = true
 content_margin_left = 1.0
 content_margin_right = 1.0
 content_margin_top = 1.0
@@ -98,27 +143,27 @@ corner_radius_bottom_left = 15
 corner_detail = 10
 anti_aliasing = false
 
-[sub_resource type="DynamicFont" id=6]
+[sub_resource type="DynamicFont" id=10]
 size = 20
 font_data = ExtResource( 33 )
 
-[sub_resource type="StyleBoxFlat" id=7]
+[sub_resource type="StyleBoxFlat" id=11]
 bg_color = Color( 0.25098, 0.235294, 0.235294, 0.509804 )
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
-[sub_resource type="DynamicFontData" id=8]
+[sub_resource type="DynamicFontData" id=12]
 font_path = "res://Assets/fonts/Roboto-Light.ttf"
 
-[sub_resource type="DynamicFont" id=9]
+[sub_resource type="DynamicFont" id=13]
 size = 25
 outline_size = 1
 outline_color = Color( 1, 0.996078, 0.996078, 1 )
 use_mipmaps = true
 use_filter = true
-font_data = SubResource( 8 )
+font_data = SubResource( 12 )
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -155,7 +200,7 @@ format = 1
 pause_mode = 2
 position = Vector2( 221.436, 253.617 )
 current = true
-zoom = Vector2( 0.3, 0.3 )
+zoom = Vector2( 0.5, 0.5 )
 script = ExtResource( 7 )
 Speed = 30.0
 
@@ -231,6 +276,8 @@ shape = SubResource( 3 )
 
 [node name="entities" type="YSort" parent="instanceSort"]
 
+[node name="footSteps" type="YSort" parent="instanceSort"]
+
 [node name="selectionRect" type="Node2D" parent="."]
 script = ExtResource( 15 )
 
@@ -243,9 +290,10 @@ modulate = Color( 1, 0, 0, 1 )
 self_modulate = Color( 1, 0, 0, 1 )
 scale = Vector2( 1.29147, 1.20693 )
 frames = SubResource( 4 )
-frame = 10
+frame = 2
 speed_scale = 2.0
 playing = true
+offset = Vector2( 0, -5 )
 
 [node name="UserInterface" type="CanvasLayer" parent="."]
 
@@ -256,23 +304,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NinePatchRect" type="NinePatchRect" parent="UserInterface/Control"]
+[node name="BuildingShop" type="NinePatchRect" parent="UserInterface/Control"]
+self_modulate = Color( 0.337255, 0.290196, 0.290196, 0.682353 )
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 512.0
 margin_right = 760.0
 margin_bottom = 560.0
+rect_min_size = Vector2( 800, 48 )
 texture = ExtResource( 17 )
 patch_margin_left = 10
 patch_margin_top = 10
 patch_margin_right = 10
 patch_margin_bottom = 10
+script = ExtResource( 34 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer" type="GridContainer" parent="UserInterface/Control/NinePatchRect"]
+[node name="GridContainer" type="GridContainer" parent="UserInterface/Control/BuildingShop"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -286,29 +337,39 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="barrack" type="Button" parent="UserInterface/Control/NinePatchRect/GridContainer" groups=[
+[node name="archeryRange" type="Button" parent="UserInterface/Control/BuildingShop/GridContainer" groups=[
 "building_buttons",
 ]]
-margin_right = 44.0
-margin_bottom = 38.0
-icon = ExtResource( 6 )
-
-[node name="archeryRange" type="Button" parent="UserInterface/Control/NinePatchRect/GridContainer" groups=[
-"building_buttons",
-]]
-margin_left = 48.0
-margin_right = 92.0
-margin_bottom = 38.0
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 40, 40 )
+mouse_default_cursor_shape = 2
+custom_styles/hover = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
 icon = ExtResource( 10 )
+expand_icon = true
+
+[node name="barrack" type="Button" parent="UserInterface/Control/BuildingShop/GridContainer" groups=[
+"building_buttons",
+]]
+margin_left = 44.0
+margin_right = 84.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 40, 40 )
+mouse_default_cursor_shape = 2
+custom_styles/hover = SubResource( 7 )
+custom_styles/normal = SubResource( 8 )
+icon = ExtResource( 6 )
+expand_icon = true
 
 [node name="Popup" type="PopupPanel" parent="UserInterface/Control"]
-pause_mode = 2
 visible = true
 margin_left = 216.0
 margin_top = 112.0
 margin_right = 446.0
 margin_bottom = 260.0
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 9 )
+popup_exclusive = true
 script = ExtResource( 32 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -333,7 +394,7 @@ margin_bottom = 101.0
 pause_mode = 2
 margin_right = 228.0
 margin_bottom = 5.0
-custom_fonts/font = SubResource( 6 )
+custom_fonts/font = SubResource( 10 )
 text = "Victory!"
 align = 1
 valign = 1
@@ -354,6 +415,7 @@ margin_bottom = 57.0
 alignment = 1
 
 [node name="LobbyButton" type="Button" parent="UserInterface/Control/Popup/VBoxContainer/VBoxContainer/HBoxContainer"]
+pause_mode = 2
 margin_left = 64.0
 margin_right = 164.0
 margin_bottom = 30.0
@@ -370,7 +432,7 @@ __meta__ = {
 [node name="Panel" type="Panel" parent="UserInterface/HUD"]
 margin_right = 158.0
 margin_bottom = 40.0
-custom_styles/panel = SubResource( 7 )
+custom_styles/panel = SubResource( 11 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -389,7 +451,7 @@ __meta__ = {
 margin_left = 64.0
 margin_right = 144.0
 margin_bottom = 40.0
-custom_fonts/font = SubResource( 9 )
+custom_fonts/font = SubResource( 13 )
 text = "0"
 valign = 1
 script = ExtResource( 31 )

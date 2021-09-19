@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Scripts/archer.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Bow.gd" type="Script" id=2]
@@ -9,12 +9,13 @@
 [ext_resource path="res://Assets/bow.png" type="Texture" id=7]
 [ext_resource path="res://Assets/archer2.png" type="Texture" id=8]
 [ext_resource path="res://Assets/archer1.png" type="Texture" id=9]
+[ext_resource path="res://Scenes/dust.tscn" type="PackedScene" id=10]
 
-[sub_resource type="CapsuleShape2D" id=3]
+[sub_resource type="CapsuleShape2D" id=1]
 radius = 4.5
 height = 0.0
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=2]
 length = 0.75
 step = 0.05
 tracks/0/type = "value"
@@ -42,10 +43,10 @@ tracks/1/keys = {
 "values": [ 0.0, -20.0, -20.0, 0.0 ]
 }
 
-[sub_resource type="CircleShape2D" id=5]
+[sub_resource type="CircleShape2D" id=3]
 radius = 90.0
 
-[sub_resource type="Shader" id=7]
+[sub_resource type="Shader" id=4]
 code = "shader_type canvas_item;
 
 uniform vec4 origin:hint_color;
@@ -61,14 +62,14 @@ void fragment() {
 		COLOR = current_pixel;
 }"
 
-[sub_resource type="ShaderMaterial" id=8]
+[sub_resource type="ShaderMaterial" id=5]
 resource_local_to_scene = true
-shader = SubResource( 7 )
+shader = SubResource( 4 )
 shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
 shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
 shader_param/isEnemy = false
 
-[sub_resource type="SpriteFrames" id=9]
+[sub_resource type="SpriteFrames" id=6]
 animations = [ {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
@@ -81,8 +82,7 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="Animation" id=10]
-resource_name = "Die"
+[sub_resource type="Animation" id=7]
 length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:rotation_degrees")
@@ -101,10 +101,11 @@ tracks/0/keys = {
 script = ExtResource( 1 )
 attackRange = 90
 baseCritChance = 0.05
+footDust = ExtResource( 10 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( -0.043175, -0.105675 )
-shape = SubResource( 3 )
+shape = SubResource( 1 )
 
 [node name="StopTimer" type="Timer" parent="."]
 one_shot = true
@@ -138,7 +139,7 @@ texture = ExtResource( 7 )
 centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
-anims/Shoot = SubResource( 4 )
+anims/Shoot = SubResource( 2 )
 
 [node name="VisionRange" type="Area2D" parent="."]
 visible = false
@@ -146,7 +147,7 @@ visible = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
 visible = false
 position = Vector2( -0.594604, 3.27032 )
-shape = SubResource( 5 )
+shape = SubResource( 3 )
 
 [node name="AvoidRayCast" type="Node2D" parent="."]
 
@@ -156,14 +157,14 @@ enabled = true
 cast_to = Vector2( 0, 7 )
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
-material = SubResource( 8 )
+material = SubResource( 5 )
 position = Vector2( -0.0341434, -0.100505 )
-frames = SubResource( 9 )
+frames = SubResource( 6 )
 animation = "idle"
 offset = Vector2( 0.359143, -7.8995 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/Die = SubResource( 10 )
+anims/Die = SubResource( 7 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
 [connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

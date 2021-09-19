@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/dust.gd" type="Script" id=2]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 0.7875 ), 0.0, 0.0, 0, 0, Vector2( 0.790941, 0.660227 ), -2.60909, -2.60909, 0, 0, Vector2( 0.982578, 0.0420455 ), 0.0, 0.0, 0, 0 ]
+
+[node name="Dust" type="CPUParticles2D"]
+emitting = false
+amount = 10
+one_shot = true
+speed_scale = 2.0
+explosiveness = 1.0
+emission_shape = 1
+emission_sphere_radius = 1.0
+direction = Vector2( 0, -1 )
+spread = 40.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 8.0
+initial_velocity_random = 0.9
+angular_velocity = -80.0
+angular_velocity_random = 1.0
+scale_amount_curve = SubResource( 1 )
+color = Color( 0.45098, 0.419608, 0.419608, 1 )
+hue_variation = 0.03
+hue_variation_random = 0.83
+script = ExtResource( 2 )

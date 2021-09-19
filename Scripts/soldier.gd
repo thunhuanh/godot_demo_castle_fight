@@ -10,6 +10,7 @@ export var unitOwner : String = "ally" setget setUnitOwner
 export var baseCritChance : float = 0.075
 export var baseCritMultiplier : float = 1.5
 export var reward = 1
+export var footDust : PackedScene
 
 var avoidForce = 20
 
@@ -32,9 +33,10 @@ var collisionRadius = 0
 var attackTarget = null
 var isAttacking : bool = false
 var type : String = "melee"
+var frameCount = 0
 
 onready var stopTimer : Timer = $StopTimer
-onready var weapon : Node2D = $Weapon
+onready var weapon : Node2D = get_node_or_null("./Weapon")
 onready var sprite : AnimatedSprite = $Sprite
 onready var healthBar : TextureProgress = $HealthBar
 onready var avoidRay : Node2D = $AvoidRayCast
@@ -67,11 +69,11 @@ func updateMovementAndAction(_delta):
 	isAttacking = false
 	handleAttack()
 	# set attack target
-	if is_network_master():
-		handleMovement()
-		rset_unreliable("slavePosition", position)
-	else:
-		position = slavePosition
+#	if is_network_master():
+	handleMovement()
+#	rset("slavePosition", position)
+#	else:
+#		position = slavePosition
 
 func isMoving() -> bool:
 	var isMove = global_position != prevPos
@@ -83,6 +85,10 @@ func updateSprite():
 		sprite.play("idle")
 	else:
 		sprite.play("walk")
+		handleFootStepEmitDust()
+	
+	if weapon == null:
+		return
 	
 	if unitOwner == "enemy":
 		weapon.scale.x = -1
@@ -95,7 +101,7 @@ func updateSprite():
 
 func setUnitOwner(newUnitOwner):
 	unitOwner = newUnitOwner
-	if newUnitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
+	if newUnitOwner == 'enemy' and sprite and sprite.material.get_shader_param("isEnemy") == false:
 		sprite.material.set_shader_param("isEnemy", true)
 
 func handleMovement():
@@ -105,6 +111,16 @@ func handleMovement():
 	velocity = position.direction_to(dest) * speed
 	moveAlongPath()
 	moveWithAvoidance()
+
+func handleFootStepEmitDust():
+	if footDust and frameCount == 10:
+		var dust = footDust.instance()
+		dust.emitting = true
+		dust.global_position = global_position
+		get_parent().get_parent().get_child(4).add_child(dust)
+		frameCount = 0
+	else:
+		frameCount += 1
 
 func handleAttack():
 	# engaging
@@ -120,10 +136,10 @@ func handleAttack():
 	if cloestEnemyWithinRange() != null:
 		attackTarget = weakref(cloestEnemyWithinRange())
 		# perform attack
-		if weapon:
-			weapon.rpc("attack")
-#		weapon.attack()
 		isAttacking = true
+		if weapon != null:
+			weapon.attack()
+#			weapon.rpc("attack")
 
 func setDest(_dest : Vector2):
 	dest = _dest
@@ -185,7 +201,8 @@ remotesync func takeDamage(_damage: int) -> void:
 		$CollisionShape2D.disabled = true
 		dest = global_position
 		finalDest = global_position
-		weapon.queue_free()
+		if weapon:
+			weapon.hide()
 		healthBar.hide()
 		
 		# play death animation
@@ -197,15 +214,10 @@ remotesync func takeDamage(_damage: int) -> void:
 		var floatingCoinReceive = floatingCoin.instance()
 		floatingCoinReceive.amount = reward
 		add_child(floatingCoinReceive)
-		# add timer wait 0.3 second before remove from scene tree
-		var t = Timer.new()
-		t.set_wait_time(0.5)
-		t.set_one_shot(true)
-		add_child(t)
-		t.start()
-		yield(t, "timeout")
-		# remove from scene trê
-		queue_free()
+		# add timer wait 0.5 second before remove from scene tree
+		yield(get_tree().create_timer(0.5), "timeout")
+		# remove from scene tree
+		free()
 
 func _on_StopTimer_timeout():
 	if get_slide_count():

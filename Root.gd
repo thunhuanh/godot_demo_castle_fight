@@ -72,8 +72,6 @@ func _player_connected(other_playerId):
 	curGame = GameScene.instance()
 
 	var cameraName = "camera"
-	if OS.get_name().to_lower() == 'ios' or OS.get_name().to_lower() == 'android':
-		cameraName = "TouchScreenCamera"
 
 	player = PlayerScene.instance()
 	var playerID = get_tree().get_network_unique_id()

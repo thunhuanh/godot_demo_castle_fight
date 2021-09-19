@@ -57,6 +57,7 @@ func _ready():
 	
 	# connect building button to function
 	for i in get_tree().get_nodes_in_group("building_buttons"):
+		i.set_focus_mode(1)
 		i.connect("pressed", self, "init_building", [i.get_name()])
 	
 #	builder = builderScene.instance()
@@ -222,6 +223,6 @@ func init_building(building_type):
 	canPlace = !canPlace
 
 func _on_LobbyButton_pressed():
-	get_tree().change_scene("res://Root.tscn")
+	var _err = get_tree().change_scene("res://Root.tscn")
 	Gotm.lobby.leave()
 	self.queue_free()

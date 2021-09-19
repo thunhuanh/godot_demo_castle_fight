@@ -25,6 +25,7 @@ onready var buildProgress : ProgressBar = $BuildProgress
 onready var healthBar : ProgressBar = $HealthBar
 onready var sprite : Sprite = $Sprite
 
+onready var gameScene = get_node_or_null("/root/Game")
 onready var buildFoundationTexture = preload("res://Assets/build_foundation.png")
 var completeBuildingTexture 
 var buildProgressRef = null
@@ -117,22 +118,34 @@ func _on_SpawnTimer_timeout():
 	# spawn soldier
 	spawnProgress += 1
 
-	var isNumOfSoldierValid = true
-	if isNumOfSoldierValid && spawnProgress == spawnRate:
-		var newSoldier = soldier.instance()
-
-		newSoldier.position = position + Vector2(0, 16)
-		newSoldier.setUnitOwner(unitOwner)
-		newSoldier.setPathfinding(get_parent().get_parent().get_parent().pathfinding)
-		
-		get_parent().get_parent().get_child(3).add_child(newSoldier)
-		newSoldier.setDest(enemyMainHouseDest)
-
-		numOfSoldier += 1
+	if spawnProgress == spawnRate:
+#		if is_network_master():
+		var spawnLocation = position + Vector2(0, 16)
+		spawnSoldier(unitOwner, enemyMainHouseDest,spawnLocation, gameScene.pathfinding)
+		#spawnSoldier(unitOwner, enemyMainHouseDest, position, get_parent().get_parent().get_parent().pathfinding)
 		
 		# reset progress bar
 		spawnProgress = 0
+
+func spawnSoldier(_unitOwner, _enemyMainHouseDest, _position, _pathfinding):
+	var newSoldier = soldier.instance()
+	newSoldier.set_physics_process(false)
+
+	newSoldier.set_position(_position)
+	newSoldier.setUnitOwner(_unitOwner)
+	newSoldier.setPathfinding(_pathfinding)
 	
+	if newSoldier.get_parent():
+		newSoldier.get_parent().remove_child(newSoldier)
+
+	var entitiesList = gameScene.get_node("instanceSort/entities")
+	if entitiesList:
+		entitiesList.add_child(newSoldier, true)
+	newSoldier.setDest(_enemyMainHouseDest)
+	newSoldier.set_physics_process(true)
+	
+#	numOfSoldier += 1
+		
 #	if spawnProgressBar.visible && numOfSoldier >= maxSoldier:
 #		spawnProgressBar.visible = false
 #
