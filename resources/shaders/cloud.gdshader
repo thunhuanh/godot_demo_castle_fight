@@ -7,6 +7,9 @@ uniform float brightness: hint_range(0.0, 2.0) = 0.1;
 uniform float alpha: hint_range(0.0, 2.0) = 0.1;
 uniform float threshold : hint_range(0.0, 2.0) = 0.1;
 uniform float fluffiness : hint_range(0.0, 2.0) = 0.1;
+uniform float softThreshold : hint_range(0.0, 2.0) = 0.1;
+uniform bool isSoft = false;
+
 
 vec4 overlay(vec4 base, vec4 blend){
 	vec4 limit = step(0.5, base);
@@ -23,12 +26,21 @@ void fragment() {
 	vec4 combinedNoise = noise1 + noise2;
 	
 	// Creating smooth transitions using smoothstep
-	combinedNoise.a = combinedNoise.r;
-	COLOR.rgb = smoothstep(threshold - 0.3, threshold + 0.3, combinedNoise).rgb * brightness;
-	COLOR.a = smoothstep(threshold - 0.3, threshold + 0.3, combinedNoise).a * alpha;
+	
 
-//	vec4 base = texture(SCREEN_TEXTURE, uv, 0.0);
-	// noise texture
-//	vec4 blend = texture(noise, UV + ( direction * speed * TIME));
-//	COLOR = overlay(base, blend);
+	if (isSoft == true) {
+		// Creating smooth transitions using smoothstep
+
+		combinedNoise.a = combinedNoise.r;
+		COLOR.rgb = smoothstep(threshold - softThreshold, threshold + softThreshold, combinedNoise).rgb * brightness;
+		COLOR.a = smoothstep(threshold - softThreshold, threshold + softThreshold, combinedNoise).a * alpha;
+	} else {
+		// Creating hard transitions
+		COLOR.rgb = combinedNoise.rgb * brightness;
+		if (combinedNoise.r < threshold) {
+			COLOR.a = 0.0;
+		} else {
+			COLOR.a = 1.0;
+		}
+	}
 }
