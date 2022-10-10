@@ -51,17 +51,20 @@ func _on_Host_clicked(instance):
 func host():
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(PORT)
+	print("host", $Lobbies/Host/Name.get_text())
 	get_tree().set_network_peer(peer)
+	get_tree().paused = false
 
 func join():
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(Gotm.lobby.host.address, PORT)
 	get_tree().set_network_peer(peer)
 	
-	$Label.show()	
+	$Label.show()
 	$Label/Spinner.show()
 	yield(get_tree(), "connected_to_server")
 	$Label/Spinner.hide()
+	get_tree().paused = false
 
 func lockLobby():
 	Gotm.lobby.locked = true

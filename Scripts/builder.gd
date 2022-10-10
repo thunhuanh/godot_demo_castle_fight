@@ -51,17 +51,18 @@ func _physics_process(_delta):
 	#reset velocity
 	velocity = Vector2.ZERO
 
-#	if position.distance_to(dest) > 1.5:
-#		velocity = position.direction_to(dest) * speed
-#	var path = []
-#	if pathfinding:
-#		path = pathfinding.getPath(global_position, dest)
-#
-#	if path.size() > 1:
-#		if position.distance_to(path[0]) > 1.5:
-#			velocity = position.direction_to(path[0]) * speed
-#
-#	velocity = move_and_slide(velocity)
+	if GlobalVar.debug:
+		if position.distance_to(dest) > 1.5:
+			velocity = position.direction_to(dest) * speed
+		var path = []
+		if pathfinding:
+			path = pathfinding.getPath(global_position, dest)
+
+		if path.size() > 1:
+			if position.distance_to(path[0]) > 1.5:
+				velocity = position.direction_to(path[0]) * speed
+
+		velocity = move_and_slide(velocity)
 	# playing on mobile
 	if isOnMobile:
 		handleMobileMovement()
@@ -91,6 +92,8 @@ func handleMobileMovement():
 			velocity = move_and_slide(controlNode.output * speed)
 
 func handleNormalMovement():
+	if GlobalVar.debug:
+		return
 	if get_tree().has_network_peer() && is_network_master():
 		if position.distance_to(dest) > 1.5:
 			velocity = position.direction_to(dest) * speed
@@ -104,7 +107,6 @@ func handleNormalMovement():
 		rset_unreliable("slavePosition", position)
 	else:
 		position = slavePosition
-		
 	velocity = move_and_slide(velocity)
 
 func handleFootStepEmitDust():

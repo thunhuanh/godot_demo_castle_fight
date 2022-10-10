@@ -100,6 +100,7 @@ config/windows_native_icon="res://Assets/mainHouse1.ico"
 [autoload]
 
 GlobalVar="*res://Scripts/Global/GlobalVar.gd"
+Utils="*res://Scripts/Global/utils.gd"
 Gotm="*res://gotm/Gotm.gd"
 
 [debug]
@@ -117,6 +118,7 @@ window/size/test_width=800
 window/size/test_height=600
 window/vsync/use_vsync=false
 window/stretch/mode="2d"
+window/stretch/aspect="keep"
 
 [editor_plugins]
 
@@ -124,8 +126,8 @@ enabled=PoolStringArray( "res://addons/multirun/plugin.cfg", "res://addons/ppc/p
 
 [gdnative]
 
-singletons=[ "res://webrtc/webrtc.tres" ]
-singletons_disabled=[ "res://webrtc/webrtc.tres" ]
+singletons=[  ]
+singletons_disabled=[  ]
 
 [global]
 

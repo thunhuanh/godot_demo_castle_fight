@@ -20,9 +20,12 @@ remote func takeDamage(damage : float, _unitOwner: String = "s") -> void:
 	if currentHealth <= 0 :
 		var destroyed_main_house_texture = load("res://Assets/"+get_name()+"-destroyed.png")
 		$Sprite.set_texture(destroyed_main_house_texture)
+		if !GlobalVar.debug:
+			rpc("pauseGame")
+			rpc("setGameStatusText", "LOSS!")
+			return
 		setGameStatusText("VICTORY!")
-		rpc("setGameStatusText", "LOSS!")
-		rpc("pauseGame")
+		pauseGame()
 		
 remote func setGameStatusText(_text: String):
 	if popup:

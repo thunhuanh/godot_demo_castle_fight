@@ -42,8 +42,11 @@ func _on_Arrow_body_entered(_body: Node2D):
 	if target != null && target.get_ref() != null:
 		if target.get_ref().has_method("takeDamage") && target.get_ref().unitOwner != unitOwner && target.get_ref().currentHealth >= 0:
 			if target.get_ref():
+				if GlobalVar.debug:
+					target.get_ref().takeDamage(damage)
+					queue_free()
+					return
 				target.get_ref().rpc("takeDamage", damage)
-#				target.get_ref().takeDamage(damage)
 				queue_free()
 
 

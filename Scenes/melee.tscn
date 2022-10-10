@@ -1,67 +1,21 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=30 format=2]
 
-[ext_resource path="res://Assets/soldier1.png" type="Texture" id=1]
+[ext_resource path="res://Assets/soldier-walk.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/meleeSoldier.gd" type="Script" id=2]
-[ext_resource path="res://Assets/spear.png" type="Texture" id=3]
-[ext_resource path="res://Scripts/Weapon.gd" type="Script" id=4]
+[ext_resource path="res://Assets/soldier-attack.png" type="Texture" id=3]
+[ext_resource path="res://Scenes/dust.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Assets/bounding box.png" type="Texture" id=5]
 [ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=6]
 [ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=7]
-[ext_resource path="res://Assets/soldier3.png" type="Texture" id=8]
-[ext_resource path="res://Assets/soldier2.png" type="Texture" id=9]
-[ext_resource path="res://Scenes/dust.tscn" type="PackedScene" id=10]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 4.0
+radius = 3.3604
 height = 0.0
 
-[sub_resource type="Animation" id=2]
-length = 0.4
-tracks/0/type = "value"
-tracks/0/path = NodePath("WeaponSprite:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.4 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 0, -5 ), Vector2( 0, -8 ), Vector2( 18, -3.5 ), Vector2( 0, -5 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("WeaponSprite:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.4 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ 0.0, 0.0, 90.0, 0.0 ]
-}
+[sub_resource type="CircleShape2D" id=2]
+radius = 40.0
 
-[sub_resource type="CircleShape2D" id=3]
-radius = 100.0
-
-[sub_resource type="Animation" id=4]
-resource_name = "Die"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/path = NodePath("Sprite:rotation_degrees")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 0.3, 0.5 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ 0.0, 35.0, 49.2, 90.0 ]
-}
-
-[sub_resource type="Shader" id=5]
+[sub_resource type="Shader" id=3]
 code = "shader_type canvas_item;
 
 uniform vec4 origin:hint_color;
@@ -77,45 +31,129 @@ void fragment() {
 		COLOR = current_pixel;
 }"
 
-[sub_resource type="ShaderMaterial" id=6]
+[sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
-shader = SubResource( 5 )
-shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
-shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
+shader = SubResource( 3 )
+shader_param/origin = Color( 0.294118, 0.411765, 0.184314, 1 )
+shader_param/new = Color( 0.619608, 0.117647, 0.117647, 1 )
 shader_param/isEnemy = false
 
-[sub_resource type="SpriteFrames" id=7]
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 3 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 3 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 3 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 3 )
+region = Rect2( 64, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 3 )
+region = Rect2( 80, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 3 )
+region = Rect2( 96, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 1 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=15]
+atlas = ExtResource( 1 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=16]
+atlas = ExtResource( 1 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=17]
+atlas = ExtResource( 1 )
+region = Rect2( 64, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=18]
+atlas = ExtResource( 1 )
+region = Rect2( 80, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=19]
+atlas = ExtResource( 1 )
+region = Rect2( 96, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=20]
+atlas = ExtResource( 1 )
+region = Rect2( 112, 0, 16, 16 )
+
+[sub_resource type="SpriteFrames" id=21]
 animations = [ {
-"frames": [ ExtResource( 1 ) ],
+"frames": [ SubResource( 5 ) ],
 "loop": true,
 "name": "idle",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 9 ), ExtResource( 8 ) ],
+"frames": [ SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ) ],
+"loop": true,
+"name": "attack",
+"speed": 8.0
+}, {
+"frames": [ SubResource( 13 ), SubResource( 14 ), SubResource( 15 ), SubResource( 16 ), SubResource( 17 ), SubResource( 18 ), SubResource( 19 ), SubResource( 20 ) ],
 "loop": true,
 "name": "walk",
-"speed": 5.0
+"speed": 10.0
 } ]
+
+[sub_resource type="Animation" id=22]
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 35.0, 49.2, 90.0 ]
+}
 
 [node name="melee" type="KinematicBody2D"]
 script = ExtResource( 2 )
-speed = 30.0
-attackRange = 15
-maxDamage = 2.0
-footDust = ExtResource( 10 )
+attackRange = 20
+minDamage = 2.0
+maxDamage = 4.0
+footDust = ExtResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( -0.123293, -0.172724 )
+position = Vector2( -0.448289, -0.983516 )
 shape = SubResource( 1 )
 
 [node name="StopTimer" type="Timer" parent="."]
 one_shot = true
 
 [node name="HealthBar" type="TextureProgress" parent="."]
-margin_left = -8.27561
-margin_top = -17.9981
-margin_right = 7.72439
-margin_bottom = -14.9981
+margin_left = -8.0
+margin_top = -18.1022
+margin_right = 8.0
+margin_bottom = -15.1022
 step = 0.0
 value = 50.0
 texture_under = ExtResource( 6 )
@@ -129,24 +167,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Weapon" type="Node2D" parent="."]
-position = Vector2( 0, -10 )
-script = ExtResource( 4 )
-
-[node name="WeaponSprite" type="Sprite" parent="Weapon"]
-position = Vector2( 0, -5 )
-scale = Vector2( 0.923716, 0.697803 )
-texture = ExtResource( 3 )
-centered = false
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
-anims/Swing = SubResource( 2 )
-
 [node name="VisionRange" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
-shape = SubResource( 3 )
+visible = false
+shape = SubResource( 2 )
 
 [node name="AvoidRayCast" type="Node2D" parent="."]
 
@@ -154,19 +179,18 @@ shape = SubResource( 3 )
 position = Vector2( 0, -0.111362 )
 rotation = -1.5708
 enabled = true
-cast_to = Vector2( 0, 5 )
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/Die = SubResource( 4 )
+cast_to = Vector2( 0, 15 )
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
-material = SubResource( 6 )
-position = Vector2( -0.0691109, -0.0340405 )
-frames = SubResource( 7 )
+material = SubResource( 4 )
+frames = SubResource( 21 )
 animation = "idle"
-offset = Vector2( 0.490034, -7.96596 )
+offset = Vector2( 0, -8 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Die = SubResource( 22 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
-[connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 [connection signal="body_entered" from="VisionRange" to="." method="_on_VisionRange_body_entered"]
 [connection signal="body_exited" from="VisionRange" to="." method="_on_VisionRange_body_exited"]
+[connection signal="animation_finished" from="Sprite" to="." method="_on_Sprite_animation_finished"]

@@ -1,10 +1,8 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scripts/ProgressBar.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/building.gd" type="Script" id=2]
 [ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=3]
-[ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=4]
-[ext_resource path="res://Assets/progress-bar-over.png" type="Texture" id=5]
 [ext_resource path="res://Assets/archeryRange.png" type="Texture" id=6]
 [ext_resource path="res://Scenes/archer.tscn" type="PackedScene" id=7]
 
@@ -75,9 +73,9 @@ shape = SubResource( 3 )
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 margin_left = -16.0
-margin_top = -25.0
+margin_top = -27.1224
 margin_right = 16.0
-margin_bottom = -20.0
+margin_bottom = -22.1224
 custom_styles/fg = SubResource( 4 )
 custom_styles/bg = SubResource( 5 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
@@ -91,15 +89,14 @@ __meta__ = {
 }
 
 [node name="SpawnProgress" type="TextureProgress" parent="."]
-margin_left = 21.9707
-margin_top = -16.0
-margin_right = 26.9707
-margin_bottom = 16.0
+margin_left = 16.0
+margin_top = -22.1203
+margin_right = 21.0
+margin_bottom = 9.87965
+rect_rotation = 90.0
 max_value = 5.0
 value = 3.0
 rounded = true
-texture_under = ExtResource( 4 )
-texture_over = ExtResource( 5 )
 texture_progress = ExtResource( 3 )
 fill_mode = 3
 tint_under = Color( 0.376471, 0.376471, 0.376471, 0.341176 )
@@ -113,12 +110,13 @@ __meta__ = {
 
 [node name="BuildProgress" type="ProgressBar" parent="."]
 margin_left = -16.0
-margin_top = -25.0
+margin_top = -27.1224
 margin_right = 16.0
-margin_bottom = -5.0
+margin_bottom = -7.1224
 rect_scale = Vector2( 1, 0.25 )
 custom_styles/fg = SubResource( 6 )
 custom_styles/bg = SubResource( 7 )
+percent_visible = false
 __meta__ = {
 "_edit_use_anchors_": false
 }

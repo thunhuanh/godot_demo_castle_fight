@@ -1,52 +1,22 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://Scripts/archer.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/Bow.gd" type="Script" id=2]
+[ext_resource path="res://Assets/archer-walk.png" type="Texture" id=2]
 [ext_resource path="res://Assets/progress-bar-progress.png" type="Texture" id=3]
 [ext_resource path="res://Assets/progress-bar-under.png" type="Texture" id=4]
 [ext_resource path="res://Assets/bounding box.png" type="Texture" id=5]
-[ext_resource path="res://Assets/archer.png" type="Texture" id=6]
-[ext_resource path="res://Assets/bow.png" type="Texture" id=7]
-[ext_resource path="res://Assets/archer2.png" type="Texture" id=8]
-[ext_resource path="res://Assets/archer1.png" type="Texture" id=9]
+[ext_resource path="res://Assets/archer-attack.png" type="Texture" id=6]
+[ext_resource path="res://Scenes/Arrow.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Scenes/dust.tscn" type="PackedScene" id=10]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 4.5
+radius = 3.52708
 height = 0.0
 
-[sub_resource type="Animation" id=2]
-length = 0.75
-step = 0.05
-tracks/0/type = "value"
-tracks/0/path = NodePath("WeaponSprite:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.25, 0.7, 0.75 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ Vector2( 0.854742, -5.6047 ), Vector2( 1.96963, -7.85135 ), Vector2( 1.41218, -6.96958 ), Vector2( 1.41218, -6.96958 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("WeaponSprite:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0, 0.25, 0.7, 0.75 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 0,
-"values": [ 0.0, -20.0, -20.0, 0.0 ]
-}
+[sub_resource type="CircleShape2D" id=2]
+radius = 100.0
 
-[sub_resource type="CircleShape2D" id=3]
-radius = 90.0
-
-[sub_resource type="Shader" id=4]
+[sub_resource type="Shader" id=3]
 code = "shader_type canvas_item;
 
 uniform vec4 origin:hint_color;
@@ -62,27 +32,96 @@ void fragment() {
 		COLOR = current_pixel;
 }"
 
-[sub_resource type="ShaderMaterial" id=5]
+[sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
-shader = SubResource( 4 )
-shader_param/origin = Color( 0.180392, 0.447059, 0.929412, 1 )
-shader_param/new = Color( 0.556863, 0.0470588, 0.0470588, 1 )
+shader = SubResource( 3 )
+shader_param/origin = Color( 0.294118, 0.411765, 0.184314, 1 )
+shader_param/new = Color( 0.619608, 0.117647, 0.117647, 1 )
 shader_param/isEnemy = false
 
-[sub_resource type="SpriteFrames" id=6]
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 6 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 6 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 6 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 6 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 6 )
+region = Rect2( 64, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 6 )
+region = Rect2( 80, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 6 )
+region = Rect2( 96, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=13]
+atlas = ExtResource( 2 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=14]
+atlas = ExtResource( 2 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=15]
+atlas = ExtResource( 2 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=16]
+atlas = ExtResource( 2 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=17]
+atlas = ExtResource( 2 )
+region = Rect2( 64, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=18]
+atlas = ExtResource( 2 )
+region = Rect2( 80, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=19]
+atlas = ExtResource( 2 )
+region = Rect2( 96, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=20]
+atlas = ExtResource( 2 )
+region = Rect2( 112, 0, 16, 16 )
+
+[sub_resource type="SpriteFrames" id=21]
 animations = [ {
-"frames": [ ExtResource( 6 ) ],
+"frames": [ SubResource( 5 ) ],
 "loop": true,
 "name": "idle",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 9 ), ExtResource( 8 ) ],
+"frames": [ SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ) ],
+"loop": true,
+"name": "attack",
+"speed": 7.0
+}, {
+"frames": [ SubResource( 13 ), SubResource( 14 ), SubResource( 15 ), SubResource( 16 ), SubResource( 17 ), SubResource( 18 ), SubResource( 19 ), SubResource( 20 ) ],
 "loop": true,
 "name": "walk",
-"speed": 5.0
+"speed": 10.0
 } ]
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=22]
 length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:rotation_degrees")
@@ -99,12 +138,14 @@ tracks/0/keys = {
 
 [node name="archer" type="KinematicBody2D"]
 script = ExtResource( 1 )
-attackRange = 90
+attackRange = 100
 baseCritChance = 0.05
 footDust = ExtResource( 10 )
+type = "range"
+arrow = ExtResource( 7 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( -0.043175, -0.105675 )
+position = Vector2( -0.412357, -1.09905 )
 shape = SubResource( 1 )
 
 [node name="StopTimer" type="Timer" parent="."]
@@ -128,45 +169,31 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Weapon" type="Node2D" parent="."]
-position = Vector2( 0, -8.05075 )
-script = ExtResource( 2 )
-
-[node name="WeaponSprite" type="Sprite" parent="Weapon"]
-position = Vector2( 0.854742, -5.6047 )
-scale = Vector2( 0.743789, 0.697803 )
-texture = ExtResource( 7 )
-centered = false
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Weapon"]
-anims/Shoot = SubResource( 2 )
-
 [node name="VisionRange" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="VisionRange"]
 visible = false
-position = Vector2( -0.594604, 3.27032 )
-shape = SubResource( 3 )
+shape = SubResource( 2 )
 
 [node name="AvoidRayCast" type="Node2D" parent="."]
 
 [node name="Front" type="RayCast2D" parent="AvoidRayCast"]
 rotation = -1.57079
 enabled = true
-cast_to = Vector2( 0, 7 )
+cast_to = Vector2( 0, 20 )
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
-material = SubResource( 5 )
-position = Vector2( -0.0341434, -0.100505 )
-frames = SubResource( 6 )
+material = SubResource( 4 )
+position = Vector2( 0, 0.0787449 )
+frames = SubResource( 21 )
 animation = "idle"
-offset = Vector2( 0.359143, -7.8995 )
+playing = true
+offset = Vector2( 0, -8 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/Die = SubResource( 7 )
+anims/Die = SubResource( 22 )
 
 [connection signal="timeout" from="StopTimer" to="." method="_on_StopTimer_timeout"]
-[connection signal="animation_finished" from="Weapon/AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 [connection signal="body_entered" from="VisionRange" to="." method="_on_VisionRange_body_entered"]
 [connection signal="body_exited" from="VisionRange" to="." method="_on_VisionRange_body_exited"]
+[connection signal="animation_finished" from="Sprite" to="." method="_on_Sprite_animation_finished"]

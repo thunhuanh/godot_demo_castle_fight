@@ -92,6 +92,10 @@ remotesync func takeDamage(damage: float) -> void:
 	currentHealth -= damage
 	healthBar.set_value(currentHealth)
 	if currentHealth <= 0 :
+		if GlobalVar.debug:
+			GlobalVar.receiveReward(reward, unitOwner)
+			queue_free()
+			return
 		GlobalVar.rpc("receiveReward", reward, unitOwner)
 		queue_free()
 

@@ -60,9 +60,10 @@ func _ready():
 		i.set_focus_mode(1)
 		i.connect("pressed", self, "init_building", [i.get_name()])
 	
-#	builder = builderScene.instance()
-#	builder.position = Vector2(512, 256)
-#	$instanceSort.add_child(builder)
+	if GlobalVar.debug:
+		builder = builderScene.instance()
+		builder.position = Vector2(512, 256)
+		$instanceSort.add_child(builder)
 
 func _process(_delta):
 	grid.on = canPlace
@@ -78,26 +79,28 @@ func _process(_delta):
 	
 	# checked if player reach building place
 	if buildDestTile != null and reachedBuildingPlace() and isBuilding and builder != null:
-		rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)
-#		buildBuilding(buildDestination, buildingType, builder.unitOwner)
+		if GlobalVar.debug:
+			buildBuilding(buildDestination, buildingType, builder.unitOwner)
+		else:
+			rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)
 	
-remotesync func buildBuilding(buidDest: Vector2, _buildingType : String, unitOwner : String = "ally"):
+remotesync func buildBuilding(buidDest: Vector2, _buildingType : String, _unitOwner : String = "ally"):
 	var tile = buildingPlacement.world_to_map(buidDest)
 
 	building = load("res://Scenes/" + _buildingType + ".tscn")
 
 	var newBuilding = building.instance()
-	newBuilding.unitOwner = unitOwner
+	newBuilding.unitOwner = _unitOwner
 	newBuilding.position = tile * Vector2(32, 32)
 	
-	if GlobalVar.gold < newBuilding.price && unitOwner == builder.unitOwner:
+	if GlobalVar.gold < newBuilding.price && _unitOwner == builder.unitOwner:
 		isBuilding = false
 		resetBuildPlacement()
 		return
 	
 	if not tile in invalid_tiles :
 		buildings.add_child(newBuilding)
-		if unitOwner == builder.unitOwner:
+		if _unitOwner == builder.unitOwner:
 			GlobalVar.gold -= newBuilding.price
 		# remove from pathfinding
 		invalid_tiles.append(tile)
@@ -110,7 +113,7 @@ remotesync func buildBuilding(buidDest: Vector2, _buildingType : String, unitOwn
 			builder.stop()
 			builder.set_is_building(false)
 
-		if unitOwner == builder.unitOwner:
+		if _unitOwner == builder.unitOwner:
 			isBuilding = false
 			resetBuildPlacement()
 	
@@ -189,7 +192,7 @@ func selectUnit():
 			selectedBuilder = shape.collider
 			selectedBuilder.select()
 
-remotesync func placeBuilding(_buildDest: Vector2):
+func placeBuilding(_buildDest: Vector2):
 	buildDestination = _buildDest
 	var is_close_to_player : bool = (
 		buildDestination.distance_to(builder.global_position)
@@ -201,8 +204,10 @@ remotesync func placeBuilding(_buildDest: Vector2):
 
 	#prepare tile for placing building
 	if is_close_to_player:
-		rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)
-#		buildBuilding(buildDestination, buildingType, builder.unitOwner)
+		if GlobalVar.debug:
+			buildBuilding(buildDestination, buildingType, builder.unitOwner)
+		else:
+			rpc("buildBuilding", buildDestination, buildingType, builder.unitOwner)
 	else:
 		isBuilding = true
 		builder.move_to(buildDestination)

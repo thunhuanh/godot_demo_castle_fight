@@ -11,6 +11,7 @@ export var baseCritChance : float = 0.075
 export var baseCritMultiplier : float = 1.5
 export var reward = 1
 export var footDust : PackedScene
+export var type : String = "melee"
 
 var avoidForce = 20
 
@@ -32,11 +33,11 @@ var pathfinding : Pathfinding
 var collisionRadius = 0
 var attackTarget = null
 var isAttacking : bool = false
-var type : String = "melee"
+var isMoving : bool = false
 var frameCount = 0
 
 onready var stopTimer : Timer = $StopTimer
-onready var weapon : Node2D = get_node_or_null("./Weapon")
+#onready var weapon : Node2D = get_node_or_null("./Weapon")
 onready var sprite : AnimatedSprite = $Sprite
 onready var healthBar : TextureProgress = $HealthBar
 onready var avoidRay : Node2D = $AvoidRayCast
@@ -45,7 +46,9 @@ onready var game : Node2D = get_node_or_null("/root/Game")
 onready var floatingCoin = preload("res://Scenes/FloatingCoin.tscn")
 onready var animationPlayer = $AnimationPlayer
 
+var avoidanceDir = 1 # up, each soldier has 1 avoidance direction, either up or down
 var prevPos
+
 func _ready():
 	dest = global_position
 	finalDest = global_position
@@ -53,6 +56,7 @@ func _ready():
 	currentHealth = maxHealth
 	healthBar.value = currentHealth	
 	randomize()
+	avoidanceDir = sign(rand_range(-1, 1))
 
 	if game and not game.is_connected("updatePathfinding", self,  "setPathfinding"):
 		var _err = game.connect("updatePathfinding", self, "setPathfinding")
@@ -75,29 +79,32 @@ func updateMovementAndAction(_delta):
 #	else:
 #		position = slavePosition
 
-func isMoving() -> bool:
-	var isMove = global_position != prevPos
-	prevPos = global_position
-	return isMove
+#func isMoving() -> bool:
+#	var isMove = global_position != prevPos
+#	prevPos = global_position
+#	return isMove
 
 func updateSprite():
-	if !isMoving() or isAttacking:
-		sprite.play("idle")
-	else:
+	if isAttacking:
+		sprite.play("attack")
+	elif isMoving:
 		sprite.play("walk")
 		handleFootStepEmitDust()
+	else:
+		sprite.play("idle")
 	
-	if weapon == null:
-		return
-	
+#	if weapon == null:
+#		return
+#
 	if unitOwner == "enemy":
-		weapon.scale.x = -1
+		sprite.scale.x = -1
+		avoidRay.scale.x = -1
 	
 	if attackTarget and attackTarget.get_ref():
-		weapon.scale.x = sign(attackTarget.get_ref().position.x - position.x)
+		sprite.scale.x = sign(attackTarget.get_ref().position.x - position.x)
 	else:
 		if velocity.x != 0:
-			weapon.scale.x = sign(velocity.x)
+			sprite.scale.x = sign(velocity.x)
 
 func setUnitOwner(newUnitOwner):
 	unitOwner = newUnitOwner
@@ -105,12 +112,13 @@ func setUnitOwner(newUnitOwner):
 		sprite.material.set_shader_param("isEnemy", true)
 
 func handleMovement():
+	isMoving = true
 	velocity = Vector2.ZERO
 	if isAttacking == true:
+		isMoving = false
 		return
-	velocity = position.direction_to(dest) * speed
-	moveAlongPath()
-	moveWithAvoidance()
+
+	moveWithAvoidance(dest)
 
 func handleFootStepEmitDust():
 	if footDust and frameCount == 10:
@@ -125,6 +133,7 @@ func handleFootStepEmitDust():
 func handleAttack():
 	# engaging
 	if isAttacking:
+#		playAttackAnimation()
 		return
 
 	if cloestEnemy() != null:
@@ -132,23 +141,31 @@ func handleAttack():
 		# move to target
 		if type == "melee":
 			moveTo(attackTarget.get_ref().global_position)
-			
+	
 	if cloestEnemyWithinRange() != null:
 		attackTarget = weakref(cloestEnemyWithinRange())
 		# perform attack
 		isAttacking = true
-		if weapon != null:
-			weapon.attack()
+#		playAttackAnimation()
+#		if !GlobalVar.debug:
+#			rpc("playAttackAnimation")
+		
+#		if weapon != null:
+#			weapon.attack()
 #			weapon.rpc("attack")
+
+func playAttackAnimation():
+	sprite.play()
+	sprite.play("attack")
 
 func setDest(_dest : Vector2):
 	dest = _dest
 	finalDest = _dest
 
 func moveTo(tar):
-	velocity = Vector2.ZERO
-	velocity = position.direction_to(tar) * speed
-	moveWithAvoidance()
+	moveWithAvoidance(tar)
+#	velocity = Vector2.ZERO
+#	velocity = position.direction_to(tar) * speed
 
 func moveAlongPath():
 	if pathfinding:
@@ -157,25 +174,38 @@ func moveAlongPath():
 			if global_position.distance_to(path[0]) > targetMax:
 				velocity = position.direction_to(path[0]) * speed
 				handleReachedTarget()
+				return
+	
+	velocity = position.direction_to(dest) * speed
+	velocity = move_and_slide(velocity)
 
 func handleReachedTarget():
 	if get_slide_count() and stopTimer.is_stopped():
 		stopTimer.start()
 		lastPosition = global_position
 
-func moveWithAvoidance():
-	avoidRay.rotation = velocity.angle()
+func moveWithAvoidance(target):
 	var returnValues = obstacleAhead()
 	var ahead : bool = returnValues[0]
+	
+	avoidRay.rotation = velocity.angle()
+
 	var collider : Node2D = returnValues[1]
 	var avoidance : Vector2 = Vector2.ZERO
 	var steering : Vector2 = Vector2.ZERO
+
 	if ahead == true and rayFront.get_collider().unitOwner == unitOwner:
 		avoidance = (position + Vector2(rayFront.cast_to.y, rayFront.cast_to.y) - collider.position).normalized()
+		if unitOwner == "enemy":
+			avoidance.x *= -1
 		avoidance = avoidance * avoidForce 
 		steering = velocity + avoidance
-
-	velocity = move_and_slide(truncate(velocity + steering, speed))
+		
+		velocity = move_and_slide(truncate(velocity + steering, speed))
+		return
+		
+	velocity = position.direction_to(target) * speed
+	velocity = move_and_slide(velocity)
 
 func truncate(vector: Vector2, maxValue):
 	var vectorLegth = vector.length()
@@ -183,6 +213,7 @@ func truncate(vector: Vector2, maxValue):
 		vectorLegth = 1
 	var i = maxValue / vectorLegth
 	i = min(i, 1.0)
+	vector.y *= avoidanceDir # avoid in up or down direction
 	return vector * i
 
 func obstacleAhead() -> Array:
@@ -198,17 +229,20 @@ remotesync func takeDamage(_damage: int) -> void:
 	if currentHealth <= 0:
 		set_physics_process(false)
 		# stop the soldier from moving further
-		$CollisionShape2D.disabled = true
+		$CollisionShape2D.set_deferred("disabled", true)
 		dest = global_position
 		finalDest = global_position
-		if weapon:
-			weapon.hide()
+#		if weapon:
+#			weapon.hide()
 		healthBar.hide()
 		
 		# play death animation
 		animationPlayer.play("Die")
 		
-		GlobalVar.rpc("receiveReward", reward, unitOwner)
+		if !GlobalVar.debug:
+			GlobalVar.rpc("receiveReward", reward, unitOwner)
+		else:
+			GlobalVar.receiveReward(reward, unitOwner)
 		
 		# show coin receive
 		var floatingCoinReceive = floatingCoin.instance()
@@ -217,7 +251,7 @@ remotesync func takeDamage(_damage: int) -> void:
 		# add timer wait 0.5 second before remove from scene tree
 		yield(get_tree().create_timer(0.5), "timeout")
 		# remove from scene tree
-		free()
+		queue_free()
 
 func _on_StopTimer_timeout():
 	if get_slide_count():

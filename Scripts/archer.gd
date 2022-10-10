@@ -1,10 +1,9 @@
 extends soldier
 
-onready var arrow = preload("res://Scenes/Arrow.tscn")
+export var arrow : PackedScene
 
 func _ready():
 	._ready()
-	type = "range"
 #	if unitOwner == 'enemy' and sprite.material.get_shader_param("isEnemy") == false:
 #		sprite.material.set_shader_param("isEnemy", true)
 
@@ -15,7 +14,7 @@ func _physics_process(_delta):
 func _on_StopTimer_timeout():
 	._on_StopTimer_timeout()
 
-func _on_AnimationPlayer_animation_finished(_anim_name):
+func attack():
 	if attackTarget != null && attackTarget.get_ref() != null:
 		var arrowInstance = arrow.instance()
 		arrowInstance.unitOwner = unitOwner
@@ -33,3 +32,6 @@ func _on_VisionRange_body_entered(body: Node2D):
 func _on_VisionRange_body_exited(body: Node2D):
 	._on_VisionRange_body_exited(body)
 
+func _on_Sprite_animation_finished():
+	if sprite.animation == "attack":
+		attack()
